@@ -15,7 +15,7 @@ import ChatInput from "./ChatInput";
 import FileList from "./FileList";
 
 //actions
-import { openUserSidebar, setFullUser } from "../../../redux/actions";
+import { openUserSidebar, setFullUser, addMessage, chatLogs } from "../../../redux/actions";
 
 //Import Images
 import avatar4 from "../../../assets/images/users/avatar-4.jpg";
@@ -48,7 +48,7 @@ function UserChat(props) {
 
     const toggle = () => setModal(!modal);
 
-    const addMessage = (message, type) => {
+    const addMessageState = (message, type) => {
         var messageObj = null;
 
         let d = new Date();
@@ -349,7 +349,7 @@ function UserChat(props) {
                             </ModalBody>
                         </Modal>
 
-                        <ChatInput onaddMessage={addMessage} />
+                        <ChatInput onaddMessage={addMessageState} addMessageRealtime={props.addMessage} chatLogs={props.chatLogs} />
                     </div>
 
                     <UserProfileSidebar activeUser={props.recentChatList[props.active_user]} />
@@ -366,5 +366,5 @@ const mapStateToProps = (state) => {
     return { active_user, userSidebar };
 };
 
-export default withRouter(connect(mapStateToProps, { openUserSidebar, setFullUser })(UserChat));
+export default withRouter(connect(mapStateToProps, { openUserSidebar, setFullUser, addMessage, chatLogs })(UserChat));
 
