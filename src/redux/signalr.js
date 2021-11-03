@@ -1,6 +1,7 @@
 import config from "../config";
 import { eventChannel } from 'redux-saga';
 import { delay, select, put, call, take, spawn } from 'redux-saga/effects'
+import { chatLogs } from "./actions";
 import * as signalR from "@microsoft/signalr";
 function* listenNotifications() {
   const connection = new signalR.HubConnectionBuilder()
@@ -38,6 +39,7 @@ function* listenNotifications() {
     while (true) {
       const data = yield take(channel)
       console.log(data);
+      yield put(chatLogs("345a71e7827c40f4b028502e76c1a3b0"))
     }
   }
 }

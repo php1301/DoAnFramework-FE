@@ -41,28 +41,29 @@ function ChatInput(props) {
     }
 
     //function for send data to onaddMessage function(in userChat/index.js component)
-    const onaddMessage = (e, textMessage) => {
+    const onaddMessage = async (e, textMessage) => {
         e.preventDefault();
         //if text value is not emptry then call onaddMessage function
-        if (textMessage !== "") {
-            props.onaddMessage(textMessage, "textMessage");
-            settextMessage("");
-        }
+        // if (textMessage !== "") {
+        //     props.onaddMessage(textMessage, "textMessage");
+        //     settextMessage("");
+        // }
 
-        //if file input value is not empty then call onaddMessage function
-        if (file.name !== "") {
-            props.onaddMessage(file, "fileMessage");
-            setfile({
-                name: "",
-                size: ""
-            })
-        }
+        // //if file input value is not empty then call onaddMessage function
+        // if (file.name !== "") {
+        //     props.onaddMessage(file, "fileMessage");
+        //     setfile({
+        //         name: "",
+        //         size: ""
+        //     })
+        // }
 
-        //if image input value is not empty then call onaddMessage function
-        if (fileImage !== "") {
-            props.onaddMessage(fileImage, "imageMessage");
-            setfileImage("")
-        }
+        // //if image input value is not empty then call onaddMessage function
+        // if (fileImage !== "") {
+        //     props.onaddMessage(fileImage, "imageMessage");
+        //     setfileImage("")
+        // }
+        props.addMessageRealtime("345a71e7827c40f4b028502e76c1a3b0", textMessage);
     }
 
     return (

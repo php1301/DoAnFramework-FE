@@ -9,9 +9,10 @@ axios.defaults.baseURL = config.API_URL;
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
 // intercepting to capture errors
-axios.interceptors.response.use(function (response) {
-    return response.data ? response.data : response;
-}, function (error) {
+axios.interceptors.response.use((response) => {
+    return response.data
+}, (error) => {
+
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     let message;
     switch (error.status) {
@@ -28,7 +29,8 @@ axios.interceptors.response.use(function (response) {
  * @param {*} token 
  */
 const setAuthorization = (token) => {
-    axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
+    const tokenNew = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9zaWQiOiIzZTQ4ZjFjZTlmMDE1Y2M1OWJkN2JmMDYwNTY4MWYyOCIsInVuaXF1ZV9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL2V4cGlyYXRpb24iOiIxNjQ0MDE5MjAwIiwibmJmIjoxNjM1NDM0MDM1LCJleHAiOjE2NDM5OTQwMDAsImlhdCI6MTYzNTQzNDAzNX0.vCnO_OoXnxH39iaQ-JaCya_CT9EDZgthyx9rAWXL_ks"
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + tokenNew;
 }
 
 
@@ -43,8 +45,8 @@ class APIClient {
     /**
      * post given data to url
      */
-    create = (url, data) => {
-        return axios.post(url, data);
+    create = (url, data, options) => {
+        return axios.post(url, data, options);
     }
 
     /**

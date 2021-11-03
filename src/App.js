@@ -11,7 +11,7 @@ import fakeBackend from './helpers/fake-backend';
 // import { initFirebaseBackend } from "./helpers/firebase";
 
 // TODO
-fakeBackend();
+// fakeBackend();
 
 // const firebaseConfig = {
 // 	apiKey: process.env.REACT_APP_APIKEY,
