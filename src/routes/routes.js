@@ -2,7 +2,7 @@ import React from "react";
 import { Redirect } from "react-router-dom";
 
 // lazy load all the views
-const Dashboard = React.lazy(() => import("../pages/dashboard/index"));
+const Dashboard = React.lazy(() => import("../pages/dashboard/RefactorChat"));
 const StarterPage = React.lazy(() => import("../pages/StarterPage/index"));
 
 // auth
@@ -29,7 +29,7 @@ const publicRoutes = [
   { path: "/login", component: Login },
   { path: "/forget-password", component: ForgetPassword },
   { path: "/register", component: Register },
-  { path: "/lock-screen", component: LockScreen}
+  { path: "/lock-screen", component: LockScreen }
 ];
 
 const routes = [...authProtectedRoutes, ...publicRoutes];

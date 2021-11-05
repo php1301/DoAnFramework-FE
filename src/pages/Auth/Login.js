@@ -33,15 +33,15 @@ const Login = (props) => {
     // validation
     const formik = useFormik({
         initialValues: {
-            email: 'admin@themesbrand.com',
-            password: '123456'
+            username: 'admin',
+            password: '123'
         },
         validationSchema: Yup.object({
-            email: Yup.string().required('Please Enter Your Username'),
-            password: Yup.string().required('Please Enter Your Password')
+            username: Yup.string().required('Thông tin bắt buộc'),
+            password: Yup.string().required('Thông tin bắt buộc')
         }),
         onSubmit: values => {
-            props.loginUser(values.email, values.password, props.history);
+            props.loginUser(values.username, values.password, props.history);
         },
     });
 
@@ -84,17 +84,17 @@ const Login = (props) => {
                                                     </span>
                                                     <Input
                                                         type="text"
-                                                        id="email"
-                                                        name="email"
+                                                        id="username"
+                                                        name="username"
                                                         className="form-control form-control-lg border-light bg-soft-light"
-                                                        placeholder="Enter email"
+                                                        placeholder="Enter username"
                                                         onChange={formik.handleChange}
                                                         onBlur={formik.handleBlur}
-                                                        value={formik.values.email}
-                                                        invalid={formik.touched.email && formik.errors.email ? true : false}
+                                                        value={formik.values.username}
+                                                        invalid={formik.touched.username && formik.errors.username ? true : false}
                                                     />
-                                                    {formik.touched.email && formik.errors.email ? (
-                                                        <FormFeedback type="invalid">{formik.errors.email}</FormFeedback>
+                                                    {formik.touched.username && formik.errors.username ? (
+                                                        <FormFeedback type="invalid">{formik.errors.username}</FormFeedback>
                                                     ) : null}
                                                 </InputGroup>
                                             </div>

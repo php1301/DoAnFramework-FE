@@ -1,5 +1,5 @@
 import {
-    CHAT_USER, ACTIVE_USER, FULL_USER, ADD_LOGGED_USER, CREATE_GROUP, ADD_MESSAGE, API_FAILED, CHAT_LOGS
+    CHAT_USER, ACTIVE_USER, FULL_USER, ADD_LOGGED_USER, CREATE_GROUP, ADD_MESSAGE, API_FAILED, CHAT_LOGS, CHAT_HISTORY, SET_CHAT_HISTORY, SET_CHAT_LOGS, SET_CONTACTS, ADD_CONTACTS, SET_GROUPS, GROUPS, CONTACTS, SEARCH_CONTACTS, SET_SEARCH_CONTACTS
 } from './constants';
 
 export const addMessage = (groupCode, message) => ({
@@ -16,6 +16,51 @@ export const chatLogs = (groupCode, contactCode) => ({
     }
 })
 
+export const setChatLogs = (payload) => ({
+    type: SET_CHAT_LOGS,
+    payload
+})
+
+export const requestChatHistory = () => ({
+    type: CHAT_HISTORY,
+})
+export const setChatHistory = (payload) => ({
+    type: SET_CHAT_HISTORY,
+    payload
+})
+
+export const requestGroupList = () => ({
+    type: GROUPS
+})
+export const createGroup = (groupData) => ({
+    type: CREATE_GROUP,
+    payload: groupData
+})
+export const setGroup = (payload) => ({
+    type: SET_GROUPS,
+    payload
+})
+
+export const requestContactList = () => ({
+    type: CONTACTS
+})
+export const addContact = ({ code, keyword }) => ({
+    type: ADD_CONTACTS,
+    code,
+    keyword,
+})
+export const searchContact = (payload) => ({
+    type: SEARCH_CONTACTS,
+    keySearch: payload
+})
+export const setSearchContact = (payload) => ({
+    type: SET_SEARCH_CONTACTS,
+    payload
+})
+export const setContact = (payload) => ({
+    type: SET_CONTACTS,
+    payload
+})
 
 export const chatUser = () => ({
     type: CHAT_USER
@@ -36,10 +81,6 @@ export const addLoggedinUser = (userData) => ({
     payload: userData
 });
 
-export const createGroup = (groupData) => ({
-    type: CREATE_GROUP,
-    payload: groupData
-})
 
 export const apiError = (error) => ({
     type: API_FAILED,

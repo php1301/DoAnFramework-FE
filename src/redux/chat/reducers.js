@@ -1,5 +1,5 @@
 import {
-    CHAT_USER, ACTIVE_USER, FULL_USER, ADD_LOGGED_USER, CREATE_GROUP, ADD_MESSAGE, CHAT_LOGS
+    CHAT_USER, ACTIVE_USER, FULL_USER, ADD_LOGGED_USER, CREATE_GROUP, ADD_MESSAGE, CHAT_LOGS, CHAT_HISTORY, SET_CHAT_HISTORY, SET_CHAT_LOGS, SET_CONTACTS, SET_SEARCH_CONTACTS
 } from './constants';
 
 
@@ -244,9 +244,30 @@ const INIT_STATE = {
         { id: 20, name: "Hanah Mile" },
     ]
 };
+const sortContact = (contacts) => {
+    let data = contacts?.reduce((r, e) => {
+        try {
+            // get first letter of name of current element
+            let group = e.FullName[0];
+            if (!r[group]) r[group] = { group, children: [e] }
+            else r[group].children.push(e);
+        } catch (error) {
+            return [];
+        }
+        // return accumulator
+        return r;
+    }, {})
 
+    // since data at this point is an object, to get array of values
+    // we use Object.values method
+    let result = data && Object.values(data);
+    return result;
+}
 const Chat = (state = INIT_STATE, action) => {
     switch (action.type) {
+        case SET_CHAT_HISTORY:
+            const data = action.payload
+            return { ...state, data };
         case CHAT_USER:
             return { ...state };
 
@@ -277,13 +298,21 @@ const Chat = (state = INIT_STATE, action) => {
                 }
             };
 
-        case CHAT_LOGS:
-            const log = action.payload
-            return {
-                ...state, message: {
-                    ...state.message, log
-                }
-            };
+        case SET_CHAT_LOGS:
+            const log = JSON.parse(action?.payload?.data)
+            return { ...state, log };
+
+        case SET_CONTACTS:
+
+            const contact = sortContact(action?.payload)
+            return { ...state, contact };
+
+        case SET_SEARCH_CONTACTS:
+            const searchContacts = action?.payload
+            return { ...state, searchContacts };
+
+
+            
         case CREATE_GROUP:
             const newGroup = action.payload
             return {
