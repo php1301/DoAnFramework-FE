@@ -36,13 +36,16 @@ const Register = (props) => {
         initialValues: {
             username: '',
             email: '',
-            password: ''
+            password: '',
+            fullName: '',
+            phone: ''
         },
         validationSchema: Yup.object({
-            username: Yup.string().required('Required'),
-            email: Yup.string().email('Enter proper email').required('Required'),
+            username: Yup.string().required('Thông tin bắt buộc'),
+            email: Yup.string().email('Enter proper email').required('Thông tin bắt buộc'),
+            phone: Yup.string().matches(/^(0?)(3[2-9]|5[6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])[0-9]{7}$/, 'Chưa đúng định dạng').required("Thông tin bắt buộc"),
             password: Yup.string()
-                .required('Required')
+                .required('Thông tin bắt buộc')
         }),
         onSubmit: values => {
             props.registerUser(values);
@@ -122,6 +125,50 @@ const Register = (props) => {
                                                     />
                                                     {formik.touched.username && formik.errors.username ? (
                                                         <FormFeedback type="invalid">{formik.errors.username}</FormFeedback>
+                                                    ) : null}
+                                                </InputGroup>
+                                            </div>
+                                            <div className="mb-3">
+                                                <Label className="form-label">{t('Họ Tên')}</Label>
+                                                <InputGroup className="mb-3 bg-soft-light input-group-lg rounded-lg">
+                                                    <span className="input-group-text border-light text-muted">
+                                                        <i className="ri-user-2-line"></i>
+                                                    </span>
+                                                    <Input
+                                                        type="text"
+                                                        id="fullName"
+                                                    name="fullName"
+                                                        className="form-control form-control-lg bg-soft-light border-light"
+                                                        placeholder="Nguyễn Văn A"
+                                                        onChange={formik.handleChange}
+                                                        onBlur={formik.handleBlur}
+                                                        value={formik.values.fullName}
+                                                        invalid={formik.touched.fullName && formik.errors.fullName ? true : false}
+                                                    />
+                                                    {formik.touched.fullName && formik.errors.fullName ? (
+                                                        <FormFeedback type="invalid">{formik.errors.fullName}</FormFeedback>
+                                                    ) : null}
+                                                </InputGroup>
+                                            </div>
+                                            <div className="mb-3">
+                                                <Label className="form-label">{t('Số Điện Thoại')}</Label>
+                                                <InputGroup className="mb-3 bg-soft-light input-group-lg rounded-lg">
+                                                    <span className="input-group-text border-light text-muted">
+                                                        <i className="ri-user-2-line"></i>
+                                                    </span>
+                                                    <Input
+                                                        type="text"
+                                                        id="phone"
+                                                        name="phone"
+                                                        className="form-control form-control-lg bg-soft-light border-light"
+                                                        placeholder="0909090909"
+                                                        onChange={formik.handleChange}
+                                                        onBlur={formik.handleBlur}
+                                                        value={formik.values.phone}
+                                                        invalid={formik.touched.phone && formik.errors.phone ? true : false}
+                                                    />
+                                                    {formik.touched.phone && formik.errors.phone ? (
+                                                        <FormFeedback type="invalid">{formik.errors.phone}</FormFeedback>
                                                     ) : null}
                                                 </InputGroup>
                                             </div>

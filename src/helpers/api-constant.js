@@ -19,8 +19,8 @@ export const Call = "calls/call";
 export const JoinVideoCall = "calls/join-video-call";
 export const CancelVideoCall = "calls/cancel-video-call";
 
-export const GetProfile = "users/profile";
-export const UpdateProfile = "users/profile";
-export const GetContact = "users/contacts";
-export const SearchContact = "users/contacts/search";
-export const AddContact = "users/contacts";
+export const GetProfile = "User/profile";
+export const UpdateProfile = "User/profile";
+export const GetContact = "User/contacts";
+export const SearchContact = "User/contacts/search";
+export const AddContact = "User/contacts";

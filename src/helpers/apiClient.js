@@ -1,5 +1,6 @@
 import axios from 'axios';
 import config from "./../config";
+import Cookie from "js-cookie"
 
 
 // default
@@ -28,9 +29,9 @@ axios.interceptors.response.use((response) => {
  * Sets the default authorization
  * @param {*} token 
  */
-const setAuthorization = (token) => {
-    const tokenNew = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9zaWQiOiIzZTQ4ZjFjZTlmMDE1Y2M1OWJkN2JmMDYwNTY4MWYyOCIsInVuaXF1ZV9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL2V4cGlyYXRpb24iOiIxNjQ0MDE5MjAwIiwibmJmIjoxNjM1NDM0MDM1LCJleHAiOjE2NDM5OTQwMDAsImlhdCI6MTYzNTQzNDAzNX0.vCnO_OoXnxH39iaQ-JaCya_CT9EDZgthyx9rAWXL_ks"
-    axios.defaults.headers.common['Authorization'] = 'Bearer ' + tokenNew;
+const setAuthorization = () => {
+    const token = Cookie.get("token")
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
 }
 
 
@@ -38,15 +39,15 @@ class APIClient {
     /**
      * Fetches data from given url
      */
-    get = (url, params) => {
-        return axios.get(url, params);
+    get = async (url, params) => {
+        return await axios.get(url, params);
     }
 
     /**
      * post given data to url
      */
-    create = (url, data, options) => {
-        return axios.post(url, data, options);
+    create = async (url, data, options) => {
+        return await axios.post(url, data, options);
     }
 
     /**

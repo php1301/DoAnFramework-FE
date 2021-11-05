@@ -5,72 +5,39 @@ import SimpleBar from "simplebar-react";
 import { connect } from "react-redux";
 
 import { withTranslation } from 'react-i18next';
+import { addContact, requestContactList, searchContact } from '../../../redux/chat/actions';
 
 //use sortedContacts variable as global variable to sort contacts
-let sortedContacts = [
-    {
-        group: "A",
-        children: [{ name: "Demo" }]
-    }
-]
-
 class Contacts extends Component {
     constructor(props) {
         super(props);
         this.state = {
             modal: false,
-            contacts: this.props.contacts
         }
         this.toggle = this.toggle.bind(this);
-        this.sortContact = this.sortContact.bind(this);
     }
 
-    componentDidUpdate(prevProps) {
-        if (prevProps !== this.props) {
-            this.setState({
-                contacts: this.props.contacts
-            });
-        }
-    }
 
     toggle() {
         this.setState({ modal: !this.state.modal });
     }
 
-    sortContact() {
-        let data = this.state.contacts.reduce((r, e) => {
-            try {
-                // get first letter of name of current element
-                let group = e.name[0];
-                // if there is no property in accumulator with this letter create it
-                if (!r[group]) r[group] = { group, children: [e] }
-                // if there is push current element to children array for that letter
-                else r[group].children.push(e);
-            } catch (error) {
-                return sortedContacts;
-            }
-            // return accumulator
-            return r;
-        }, {})
-
-        // since data at this point is an object, to get array of values
-        // we use Object.values method
-        let result = Object.values(data);
-        this.setState({ contacts: result });
-        sortedContacts = result;
-        return result;
-    }
-
     componentDidMount() {
-        this.sortContact();
+        this.props.requestContactList()
     }
 
-    componentWillUnmount() {
-        this.sortContact();
+    handleClick = () => {
+        const keyword = document.getElementById("addcontactemail-input")?.value
+        if (keyword)
+            this.props.searchContact(keyword)
+        console.log(this.props.searchContacts)
     }
-
+    handleAddContact = (code) => {
+        const keyword = document.getElementById("addcontactemail-input")?.value
+        this.props.addContact({ code, keyword });
+    }
     render() {
-        const { t } = this.props;
+        const { t, contact } = this.props;
         return (
             <React.Fragment>
                 <div>
@@ -83,10 +50,10 @@ class Contacts extends Component {
                                 </Button>
                             </div>
                             <UncontrolledTooltip target="add-contact" placement="bottom">
-                                Add Contact
-                                    </UncontrolledTooltip>
+                                Thêm liên hệ
+                            </UncontrolledTooltip>
                         </div>
-                        <h4 className="mb-4">Contacts</h4>
+                        <h4 className="mb-4">Liên hệ</h4>
 
                         {/* Start Add contact Modal */}
                         <Modal isOpen={this.state.modal} centered toggle={this.toggle}>
@@ -96,18 +63,37 @@ class Contacts extends Component {
                             <ModalBody className="p-4">
                                 <Form>
                                     <div className="mb-4">
-                                        <Label className="form-label" htmlFor="addcontactemail-input">{t('Email')}</Label>
-                                        <Input type="email" className="form-control" id="addcontactemail-input" placeholder="Enter Email" />
+                                        <Label className="form-label" htmlFor="addcontactemail-input">{t('Từ khoá')}</Label>
+                                        <Input type="text" className="form-control" id="addcontactemail-input" placeholder="Email, SĐT, Họ Tên" />
                                     </div>
-                                    <div>
-                                        <Label className="form-label" htmlFor="addcontact-invitemessage-input">{t('Invatation Message')}</Label>
-                                        <textarea className="form-control" id="addcontact-invitemessage-input" rows="3" placeholder="Enter Message"></textarea>
-                                    </div>
+                                    {this.props.searchContacts?.length > 0 ?
+                                        (
+                                            <div>
+                                                <Label className="form-label" htmlFor="addcontact-invitemessage-input">Kết quả</Label>
+                                                <hr style={{ marginTop: "8px", marginBottom: "10px" }} />
+                                                {this.props.searchContacts?.map(s => {
+                                                    return (
+                                                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
+                                                            <p>{s.FullName}</p>
+                                                            <span onClick={() => { this.handleAddContact(s.Code) }} style={{ width: "30px", height: "30px", cursor: "pointer" }} className="avatar-title rounded-circle bg-soft-primary text-primary">
+                                                                <i class="mdi mdi-plus"></i>
+                                                            </span>
+                                                        </div>
+                                                    )
+                                                })}
+                                            </div>
+                                        ) : (
+                                            <div>
+                                                <hr style={{ marginBottom: "10px" }} />
+                                                <Label className="form-label" htmlFor="addcontact-invitemessage-input">Không có kết quả</Label>
+                                            </div>
+                                        )
+                                    }
                                 </Form>
                             </ModalBody>
                             <ModalFooter>
-                                <Button type="button" color="link" onClick={this.toggle}>Close</Button>
-                                <Button type="button" color="primary">Invite Contact</Button>
+                                <Button type="button" color="link" onClick={this.toggle}>Đóng</Button>
+                                <Button onClick={this.handleClick} type="button" color="primary">Tìm liên hệ</Button>
                             </ModalFooter>
                         </Modal>
                         {/* End Add contact Modal */}
@@ -128,7 +114,7 @@ class Contacts extends Component {
                     <SimpleBar style={{ maxHeight: "100%" }} id="chat-room" className="p-4 chat-message-list chat-group-list">
 
                         {
-                            sortedContacts.map((contact, key) =>
+                            contact?.map((contact, key) =>
                                 <div key={key} className={key + 1 === 1 ? "" : "mt-3"}>
                                     <div className="p-3 fw-bold text-primary">
                                         {contact.group}
@@ -140,7 +126,8 @@ class Contacts extends Component {
                                                 <li key={key} >
                                                     <div className="d-flex align-items-center">
                                                         <div className="flex-1">
-                                                            <h5 className="font-size-14 m-0">{child.name}</h5>
+
+                                                            <h5 className="font-size-14 m-0">{child.FullName}</h5>
                                                         </div>
                                                         <UncontrolledDropdown>
                                                             <DropdownToggle tag="a" className="text-muted">
@@ -170,8 +157,8 @@ class Contacts extends Component {
 }
 
 const mapStateToProps = (state) => {
-    const { contacts } = state.Chat;
-    return { contacts };
+    const { contact, searchContacts } = state.Chat;
+    return { contact, searchContacts };
 };
 
-export default connect(mapStateToProps, null)(withTranslation()(Contacts));
+export default connect(mapStateToProps, { addContact, requestContactList, searchContact })(withTranslation()(Contacts));

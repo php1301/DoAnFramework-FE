@@ -8,7 +8,7 @@ const isUserAuthenticated = () => {
     if (!user) {
         return false;
     }
-    
+
     try {
         const decoded = jwtDecode(user.token);
         const currentTime = Date.now() / 1000;
@@ -19,7 +19,7 @@ const isUserAuthenticated = () => {
         else {
             return true;
         }
-    } catch(e) {
+    } catch (e) {
         console.warn('access token expired');
         return false;
     }
@@ -37,7 +37,7 @@ const setLoggedInUser = (user) => {
  */
 const getLoggedInUser = () => {
     const user = localStorage.getItem('authUser');
-    return user ? (typeof (user) == 'object' ? user : JSON.parse(user)) : null;
+    return user;
 }
 
 export { isUserAuthenticated, setLoggedInUser, getLoggedInUser };

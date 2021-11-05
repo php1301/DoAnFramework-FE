@@ -2,12 +2,12 @@ import React, { Component } from 'react';
 import { Input, InputGroup } from "reactstrap";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-
+import { DateTime } from "luxon";
 //simplebar
 import SimpleBar from "simplebar-react";
 
 //actions
-import { setconversationNameInOpenChat, activeUser } from "../../../redux/actions"
+import { setconversationNameInOpenChat, activeUser, chatLogs } from "../../../redux/actions"
 
 //components
 import OnlineUsers from "./OnlineUsers";
@@ -17,14 +17,14 @@ class Chats extends Component {
         super(props);
         this.state = {
             searchChat: "",
-            recentChatList: this.props.recentChatList
+            recentChatList: this.props.recentChatList || []
         }
         this.handleChange = this.handleChange.bind(this);
         this.openUserChat = this.openUserChat.bind(this);
     }
 
     componentDidMount() {
-        var li = document.getElementById("conversation" + this.props.active_user);
+        const li = document.getElementById("conversation" + this.props.active_user);
         if (li) {
             li.classList.add("active");
         }
@@ -45,10 +45,23 @@ class Chats extends Component {
             });
         }
     }
+    formatDate = (date) => {
+        const currentDate = new Date();
+        const dateCompare = DateTime.fromISO(date).toJSDate();
 
+        if (currentDate.getDay() === dateCompare.getDay() &&
+            currentDate.getMonth() === dateCompare.getMonth() &&
+            currentDate.getFullYear() === dateCompare.getFullYear()
+        ) {
+            return DateTime.fromISO(date).toFormat("hh:mm a");;
+        }
+
+        return DateTime.fromISO(date).toFormat("MM/dd hh:mm a");;
+
+    }
     handleChange(e) {
         this.setState({ searchChat: e.target.value });
-        var search = e.target.value;
+        const search = e.target.value;
         let conversation = this.state.recentChatList;
         let filteredArray = [];
 
@@ -70,25 +83,25 @@ class Chats extends Component {
         e.preventDefault();
 
         //find index of current chat in array
-        var index = this.props.recentChatList.indexOf(chat);
-
+        const index = this.props.recentChatList.indexOf(chat);
+        this.props.chatLogs(chat.Code)
         // set activeUser 
         this.props.activeUser(index);
 
-        var chatList = document.getElementById("chat-list");
-        var clickedItem = e.target;
-        var currentli = null;
+        let chatList = document.getElementById("chat-list");
+        let clickedItem = e.target;
+        let currentli = null;
 
         if (chatList) {
-            var li = chatList.getElementsByTagName("li");
+            const li = chatList.getElementsByTagName("li");
             //remove coversation user
-            for (var i = 0; i < li.length; ++i) {
+            for (let i = 0; i < li.length; ++i) {
                 if (li[i].classList.contains('active')) {
                     li[i].classList.remove('active');
                 }
             }
             //find clicked coversation user
-            for (var k = 0; k < li.length; ++k) {
+            for (let k = 0; k < li.length; ++k) {
                 if (li[k].contains(clickedItem)) {
                     currentli = li[k];
                     break;
@@ -101,13 +114,13 @@ class Chats extends Component {
             currentli.classList.add('active');
         }
 
-        var userChat = document.getElementsByClassName("user-chat");
+        const userChat = document.getElementsByClassName("user-chat");
         if (userChat) {
             userChat[0].classList.add("user-chat-show");
         }
 
         //removes unread badge if user clicks
-        var unread = document.getElementById("unRead" + chat.id);
+        const unread = document.getElementById("unRead" + chat.id);
         if (unread) {
             unread.style.display = "none";
         }
@@ -139,6 +152,73 @@ class Chats extends Component {
                         <SimpleBar style={{ maxHeight: "100%" }} className="chat-message-list">
 
                             <ul className="list-unstyled chat-list chat-user-list" id="chat-list">
+                                {
+                                    this.state.recentChatList.map((chat, key) =>
+                                        <li key={key} id={"conversation" + key} className={chat.unRead ? "unread" : chat.isTyping ? "typing" : key === this.props.active_user ? "active" : ""}>
+                                            <Link to="#" onClick={(e) => this.openUserChat(e, chat)}>
+                                                <div className="d-flex">
+                                                    {
+                                                        chat.Avatar === "Resource/no_img.jpg" ?
+                                                            <div className={"chat-user-img " + chat?.status + " align-self-center me-3 ms-0"}>
+                                                                <div className="avatar-xs">
+                                                                    <span className="avatar-title rounded-circle bg-soft-primary text-primary">
+                                                                        {chat?.name?.charAt(0)}
+                                                                    </span>
+                                                                </div>
+                                                                {
+                                                                    chat.status && <span className="user-status"></span>
+                                                                }
+                                                            </div>
+                                                            :
+                                                            <div className={"chat-user-img " + chat.status + " align-self-center me-3 ms-0"}>
+                                                                <img src={chat.Avatar} className="rounded-circle avatar-xs" alt="chatvia" />
+                                                                {
+                                                                    chat.status && <span className="user-status"></span>
+                                                                }
+                                                            </div>
+                                                    }
+
+                                                    <div className="flex-1 overflow-hidden">
+                                                        <h5 className="text-truncate font-size-15 mb-1">{chat?.Name}</h5>
+                                                        <p className="chat-user-message text-truncate mb-0">
+                                                            {
+                                                                // chat.isTyping ?
+                                                                //     <>
+                                                                //         typing<span className="animate-typing">
+                                                                //             <span className="dot ms-1"></span>
+                                                                //             <span className="dot ms-1"></span>
+                                                                //             <span className="dot ms-1"></span>
+                                                                //         </span>
+                                                                //     </>
+                                                                //     :
+                                                                <>
+                                                                    {/* {
+                                                                            chat.messages && (chat?.LastMessage?.Content > 0 && chat.messages[(chat.messages).length - 1].isImageMessage === true) ? <i className="ri-image-fill align-middle me-1"></i> : null
+                                                                        }
+                                                                        {
+                                                                            chat.messages && (chat?.LastMessage?.Content > 0 && chat.messages[(chat.messages).length - 1].isFileMessage === true) ? <i className="ri-file-text-fill align-middle me-1"></i> : null
+                                                                        } */}
+                                                                    {chat?.LastMessage?.Content.length > 30 ? chat?.LastMessage?.Content?.substring(0, 30) + "..." : chat?.LastMessage?.Content}
+                                                                </>
+                                                            }
+
+
+
+                                                        </p>
+                                                    </div>
+                                                    <div className="font-size-11">{this.formatDate(chat?.LastActive)}</div>
+                                                    {/* {chat.unRead === 0 ? null :
+                                                        <div className="unread-message" id={"unRead" + chat.id}>
+                                                            <span className="badge badge-soft-danger rounded-pill">{chat?.LastMessage?.Content?.substring(0,30)}</span>
+                                                        </div>
+                                                    } */}
+                                                </div>
+                                            </Link>
+                                        </li>
+                                    )
+                                }
+                            </ul>
+                            {/* <ul className="list-unstyled chat-list chat-user-list" id="chat-list">
                                 {
                                     this.state.recentChatList.map((chat, key) =>
                                         <li key={key} id={"conversation" + key} className={chat.unRead ? "unread" : chat.isTyping ? "typing" : key === this.props.active_user ? "active" : ""}>
@@ -180,12 +260,12 @@ class Chats extends Component {
                                                                     :
                                                                     <>
                                                                         {
-                                                                            chat.messages && (chat.messages.length > 0 && chat.messages[(chat.messages).length - 1].isImageMessage === true) ? <i className="ri-image-fill align-middle me-1"></i> : null
+                                                                            chat.messages && (chat?.LastMessage?.Content > 0 && chat.messages[(chat.messages).length - 1].isImageMessage === true) ? <i className="ri-image-fill align-middle me-1"></i> : null
                                                                         }
                                                                         {
-                                                                            chat.messages && (chat.messages.length > 0 && chat.messages[(chat.messages).length - 1].isFileMessage === true) ? <i className="ri-file-text-fill align-middle me-1"></i> : null
+                                                                            chat.messages && (chat?.LastMessage?.Content > 0 && chat.messages[(chat.messages).length - 1].isFileMessage === true) ? <i className="ri-file-text-fill align-middle me-1"></i> : null
                                                                         }
-                                                                        {chat.messages && chat.messages.length > 0 ? chat.messages[(chat.messages).length - 1].message : null}
+                                                                        {chat.messages && chat?.LastMessage?.Content > 0 ? chat.messages[(chat.messages).length - 1].message : null}
                                                                     </>
                                                             }
 
@@ -193,10 +273,10 @@ class Chats extends Component {
 
                                                         </p>
                                                     </div>
-                                                    <div className="font-size-11">{chat.messages && chat.messages.length > 0 ? chat.messages[(chat.messages).length - 1].time : null}</div>
+                                                    <div className="font-size-11">{chat.messages && chat?.LastMessage?.Content > 0 ? chat.messages[(chat.messages).length - 1].time : null}</div>
                                                     {chat.unRead === 0 ? null :
                                                         <div className="unread-message" id={"unRead" + chat.id}>
-                                                            <span className="badge badge-soft-danger rounded-pill">{chat.messages && chat.messages.length > 0 ? chat.unRead >= 20 ? chat.unRead + "+" : chat.unRead : ""}</span>
+                                                            <span className="badge badge-soft-danger rounded-pill">{chat.messages && chat?.LastMessage?.Content > 0 ? chat.unRead >= 20 ? chat.unRead + "+" : chat.unRead : ""}</span>
                                                         </div>
                                                     }
                                                 </div>
@@ -204,7 +284,7 @@ class Chats extends Component {
                                         </li>
                                     )
                                 }
-                            </ul>
+                            </ul> */}
                         </SimpleBar>
 
                     </div>
@@ -220,4 +300,4 @@ const mapStateToProps = (state) => {
     return { active_user };
 };
 
-export default connect(mapStateToProps, { setconversationNameInOpenChat, activeUser })(Chats);
+export default connect(mapStateToProps, { setconversationNameInOpenChat, activeUser, chatLogs })(Chats);
