@@ -11,19 +11,18 @@ import { withRouter } from 'react-router-dom';
 import UserProfileSidebar from "../../../components/UserProfileSidebar";
 import SelectContact from "../../../components/SelectContact";
 import UserHead from "./UserHead";
-import ImageList from "./ImageList";
 import ChatInput from "./ChatInput";
 import FileList from "./FileList";
 
 //actions
-import { openUserSidebar, setFullUser, addMessage, chatLogs } from "../../../redux/actions";
+import { openUserSidebar, setFullUser, addMessage, chatLogs, setIsTyping } from "../../../redux/actions";
 
 //Import Images
 import avatar4 from "../../../assets/images/users/avatar-4.jpg";
-import avatar1 from "../../../assets/images/users/avatar-1.jpg";
 
 //i18n
 import { useTranslation } from 'react-i18next';
+import ImageItem from './ImageItem';
 
 function UserChat(props) {
 
@@ -62,11 +61,13 @@ function UserChat(props) {
             return formatDateGroupBy(item?.Created)
         }).map((value, key) => ({ date: key, data: value })).value();
         setchatMessages(groupByLogs);
-        ref.current.recalculate();
-        if (ref.current.el) {
-            ref.current.getScrollElement().scrollTop = ref.current.getScrollElement().scrollHeight;
-        }
+
     }, [props?.log]);
+
+    useEffect(() => {
+        ref.current.recalculate();
+        scrolltoBottom();
+    }, [chatMessages]);
 
     const toggle = () => setModal(!modal);
 
@@ -136,11 +137,10 @@ function UserChat(props) {
 
         scrolltoBottom();
     }
+    const currentUser = localStorage.getItem("authUser")
 
     function scrolltoBottom() {
-        if (ref.current.el) {
-            ref.current.getScrollElement().scrollTop = ref.current.getScrollElement().scrollHeight;
-        }
+        ref.current.getScrollElement().scrollTop = ref.current.getScrollElement().scrollHeight - 400;
     }
 
 
@@ -192,16 +192,16 @@ function UserChat(props) {
                                                         <div className="conversation-list">
 
                                                             <div className="chat-avatar">
-                                                                {dt.CreatedBy === user ? <img src={avatar4} alt="chatvia" /> :
-                                                                    dt.Avatar === "Resource/no_img.jpg" ?
+                                                                {
+                                                                    dt?.UserCreatedBy?.Avatar === "Resource/no_img.jpg" ?
                                                                         <div className="chat-user-img align-self-center me-3">
                                                                             <div className="avatar-xs">
                                                                                 <span className="avatar-title rounded-circle bg-soft-primary text-primary">
-                                                                                    {"Test name"}
+                                                                                    {dt.UserCreatedBy?.FullName?.charAt(0)}
                                                                                 </span>
                                                                             </div>
                                                                         </div>
-                                                                        : <img src={dt?.UserCreatedBy?.Avatar} alt="chatvia" />
+                                                                        : <img src={`${process.env.REACT_APP_BASE_API_URL}/Auth/img?key=${dt?.UserCreatedBy?.Avatar}`} alt="chatvia" />
                                                                 }
                                                             </div>
 
@@ -209,32 +209,21 @@ function UserChat(props) {
                                                                 <div className="ctext-wrap">
                                                                     <div className="ctext-wrap-content">
                                                                         {
-                                                                            dt?.Content &&
+                                                                            (dt.Type !== "attachment" && dt.type !== "media") && dt?.Content &&
                                                                             <p className="mb-0">
                                                                                 {dt?.Content}
                                                                             </p>
                                                                         }
-                                                                        {/* {
-                                                                        chat.imageMessage &&
-                                                                        // image list component
-                                                                        <ImageList images={chat.imageMessage} />
-                                                                    }
-                                                                    {
-                                                                        chat.fileMessage &&
-                                                                        //file input component
-                                                                        <FileList fileName={chat.fileMessage} fileSize={chat.size} />
-                                                                    }
-                                                                    {
-                                                                        chat.isTyping &&
-                                                                        <p className="mb-0">
-                                                                            typing
-                                                                            <span className="animate-typing">
-                                                                                <span className="dot ms-1"></span>
-                                                                                <span className="dot ms-1"></span>
-                                                                                <span className="dot ms-1"></span>
-                                                                            </span>
-                                                                        </p>
-                                                                    } */}
+                                                                        {
+                                                                            dt.Type === "media" &&
+                                                                            // image list component
+                                                                            <ImageItem image={dt.Path} title={dt.Content} />
+                                                                        }
+                                                                        {
+                                                                            dt.Type === "attachment" &&
+                                                                            //file input component
+                                                                            <FileList path={`${process.env.REACT_APP_BASE_API_URL}/Auth/file?key=${dt?.Path}`} fileName={dt.Content} fileSize={chat.size} />
+                                                                        }
                                                                         {/* {
                                                                         !chat.isTyping && <p className="chat-time mb-0"><i className="ri-time-line align-middle"></i> <span className="align-middle">{chat.time}</span></p>
                                                                     } */}
@@ -269,6 +258,53 @@ function UserChat(props) {
                                         </>
                                     )
                                 }
+                                {
+                                    <>
+                                        {props.isTyping?.map((dt, keyDt) =>
+                                            dt.groupCode === props.active_user.Code && dt.code !== currentUser && (
+
+                                                <li key={keyDt + "aa"} >
+                                                    <div className="conversation-list">
+
+                                                        <div className="chat-avatar">
+                                                            {
+                                                                dt?.UserCreatedBy?.Avatar === "Resource/no_img.jpg" ?
+                                                                    <div className="chat-user-img align-self-center me-3">
+                                                                        <div className="avatar-xs">
+                                                                            <span className="avatar-title rounded-circle bg-soft-primary text-primary">
+                                                                                {dt.userName?.charAt(0)}
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+                                                                    : <img src={`${process.env.REACT_APP_BASE_API_URL}/Auth/img?key=${dt?.avatar}`} alt="chatvia" />
+                                                            }
+                                                        </div>
+
+                                                        <div className="user-chat-content">
+                                                            <div className="ctext-wrap">
+                                                                <div className="ctext-wrap-content">
+                                                                    {
+                                                                        <p className="mb-0">
+                                                                            typing
+                                                                            <span className="animate-typing">
+                                                                                <span className="dot ms-1"></span>
+                                                                                <span className="dot ms-1"></span>
+                                                                                <span className="dot ms-1"></span>
+                                                                            </span>
+                                                                        </p>
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                            {
+                                                                <div className="conversation-name">{dt?.userName}</div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            )
+                                        )}
+                                    </>
+                                }
                             </ul>
                         </SimpleBar>
 
@@ -286,7 +322,7 @@ function UserChat(props) {
                             </ModalBody>
                         </Modal>
 
-                        <ChatInput onaddMessage={addMessageState} addMessageRealtime={props.addMessage} chatLogs={props.chatLogs} />
+                        <ChatInput profile={props.profile} setIsTyping={setIsTyping} connection={props.connection} onaddMessage={addMessageState} addMessageRealtime={props.addMessage} chatLogs={props.chatLogs} active_user={props.active_user} scrolltoBottom={scrolltoBottom} />
                     </div>
 
                     <UserProfileSidebar activeUser={props.recentChatList[props.active_user]} />
@@ -298,10 +334,11 @@ function UserChat(props) {
 }
 
 const mapStateToProps = (state) => {
-    const { active_user, log } = state.Chat;
+    const { active_user, log, connection, isTyping } = state.Chat;
     const { userSidebar } = state.Layout;
-    return { active_user, userSidebar, log };
+    const { profile } = state.Auth;
+    return { active_user, userSidebar, log, connection, isTyping, profile };
 };
 
-export default withRouter(connect(mapStateToProps, { openUserSidebar, setFullUser, addMessage, chatLogs })(UserChat));
+export default withRouter(connect(mapStateToProps, { openUserSidebar, setFullUser, addMessage, chatLogs, setIsTyping })(UserChat));
 

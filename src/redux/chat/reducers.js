@@ -1,8 +1,8 @@
 import {
-    CHAT_USER, ACTIVE_USER, FULL_USER, ADD_LOGGED_USER, CREATE_GROUP, ADD_MESSAGE, CHAT_LOGS, CHAT_HISTORY, SET_CHAT_HISTORY, SET_CHAT_LOGS, SET_CONTACTS, SET_SEARCH_CONTACTS
+    CHAT_USER, ACTIVE_USER, FULL_USER, ADD_LOGGED_USER, CREATE_GROUP, ADD_MESSAGE, CHAT_LOGS, CHAT_HISTORY, SET_CHAT_HISTORY, SET_CHAT_LOGS, SET_CONTACTS, SET_SEARCH_CONTACTS, GET_ACTIVE_USER, SET_CONNECTION, SET_IS_TYPING
 } from './constants';
 
-
+import _ from "lodash";
 //Import Images
 import avatar2 from "../../assets/images/users/avatar-2.jpg";
 import avatar4 from "../../assets/images/users/avatar-4.jpg";
@@ -263,10 +263,32 @@ const sortContact = (contacts) => {
     let result = data && Object.values(data);
     return result;
 }
+
+const attached = (log) => {
+    const files = _.chain(log)
+        .pickBy((item) => {
+            return item.Type === "media" || item.Type === "attachment"
+        })
+        .toArray()
+        .value()
+    return files;
+}
+
+const isTypingList = (typing, logs) => {
+    const lists = _.chain(typing).groupBy((item) => { return item.groupCode }).map((value, key) => ({ typingList: key, data: value })).value()
+    lists.forEach((i) => {
+        const index = logs.findIndex(d => i.typingList === d.Code)
+        if (index !== -1) {
+            logs[index] = { ...logs[index], typing: i };
+        }
+    })
+    return logs
+}
+
 const Chat = (state = INIT_STATE, action) => {
     switch (action.type) {
         case SET_CHAT_HISTORY:
-            const data = action.payload
+            const data = isTypingList(state?.isTyping, action?.payload)
             return { ...state, data };
         case CHAT_USER:
             return { ...state };
@@ -276,7 +298,6 @@ const Chat = (state = INIT_STATE, action) => {
                 ...state,
                 active_user: action.payload
             };
-
         case FULL_USER:
             return {
                 ...state,
@@ -300,8 +321,13 @@ const Chat = (state = INIT_STATE, action) => {
 
         case SET_CHAT_LOGS:
             const log = JSON.parse(action?.payload?.data)
-            return { ...state, log };
+            const attachedFiles = attached(log)
+            return { ...state, log, files: attachedFiles };
 
+        case SET_CONNECTION:
+            return { ...state, connection: action?.payload }
+        case SET_IS_TYPING:
+            return { ...state, isTyping: action?.payload, };
         case SET_CONTACTS:
 
             const contact = sortContact(action?.payload)
@@ -312,7 +338,7 @@ const Chat = (state = INIT_STATE, action) => {
             return { ...state, searchContacts };
 
 
-            
+
         case CREATE_GROUP:
             const newGroup = action.payload
             return {

@@ -1,5 +1,5 @@
 import {
-    CHAT_USER, ACTIVE_USER, FULL_USER, ADD_LOGGED_USER, CREATE_GROUP, ADD_MESSAGE, API_FAILED, CHAT_LOGS, CHAT_HISTORY, SET_CHAT_HISTORY, SET_CHAT_LOGS, SET_CONTACTS, ADD_CONTACTS, SET_GROUPS, GROUPS, CONTACTS, SEARCH_CONTACTS, SET_SEARCH_CONTACTS
+    CHAT_USER, ACTIVE_USER, FULL_USER, ADD_LOGGED_USER, CREATE_GROUP, ADD_MESSAGE, API_FAILED, CHAT_LOGS, CHAT_HISTORY, SET_CHAT_HISTORY, SET_CHAT_LOGS, SET_CONTACTS, ADD_CONTACTS, SET_GROUPS, GROUPS, CONTACTS, SEARCH_CONTACTS, SET_SEARCH_CONTACTS, GET_ACTIVE_USER, SET_CONNECTION, SET_IS_TYPING
 } from './constants';
 
 export const addMessage = (groupCode, message) => ({
@@ -71,6 +71,8 @@ export const activeUser = (userId) => ({
     payload: userId
 });
 
+export const getActiveUser = (state) => state.Chat.active_user
+
 export const setFullUser = (fullUser) => ({
     type: FULL_USER,
     payload: fullUser
@@ -81,6 +83,15 @@ export const addLoggedinUser = (userData) => ({
     payload: userData
 });
 
+export const setConnection = (connection) => ({
+    type: SET_CONNECTION,
+    payload: connection
+})
+
+export const setIsTyping = (payload) => ({
+    type: SET_IS_TYPING,
+    payload
+})
 
 export const apiError = (error) => ({
     type: API_FAILED,

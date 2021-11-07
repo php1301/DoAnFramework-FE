@@ -16,47 +16,6 @@ class SelectContact extends Component {
         this.state = {
             contacts: this.props.contacts
         }
-        this.sortContact = this.sortContact.bind(this);
-    }
-
-    componentDidUpdate(prevProps) {
-        if (prevProps !== this.props) {
-            this.setState({
-                contacts: this.props.contacts
-            });
-        }
-    }
-
-    sortContact() {
-        let data = this.state.contacts.reduce((r, e) => {
-            try {
-                // get first letter of name of current element
-                let group = e.name[0];
-                // if there is no property in accumulator with this letter create it
-                if (!r[group]) r[group] = { group, children: [e] }
-                // if there is push current element to children array for that letter
-                else r[group].children.push(e);
-            } catch (error) {
-                return sortedContacts;
-            }
-            // return accumulator
-            return r;
-        }, {})
-
-        // since data at this point is an object, to get array of values
-        // we use Object.values method
-        let result = Object.values(data);
-        this.setState({ contacts: result });
-        sortedContacts = result;
-        return result;
-    }
-
-    componentDidMount() {
-        this.sortContact();
-    }
-
-    componentWillUnmount() {
-        this.sortContact();
     }
 
     render() {
@@ -64,7 +23,7 @@ class SelectContact extends Component {
 
             <React.Fragment>
                 {
-                    sortedContacts.map((contact, key) =>
+                    this.props?.contact?.map((contact, key) =>
                         <div key={key}>
                             <div className="p-3 font-weight-bold text-primary">
                                 {contact.group}
@@ -76,8 +35,8 @@ class SelectContact extends Component {
 
                                         <li key={keyChild}>
                                             <div className="form-check">
-                                                <Input type="checkbox" className="form-check-input" onChange={(e) => this.props.handleCheck(e, child.id)} id={"memberCheck" + child.id} value={child.name} />
-                                                <Label className="form-check-label" htmlFor={"memberCheck" + child.id}>{child.name}</Label>
+                                                <Input type="checkbox" className="form-check-input" onChange={(e) => this.props.handleCheck(e, child.Code)} id={"memberCheck" + child.Code} value={child.FullName} />
+                                                <Label className="form-check-label" htmlFor={"memberCheck" + child.Code}>{child.FullName}</Label>
                                             </div>
                                         </li>
                                     )
@@ -92,8 +51,8 @@ class SelectContact extends Component {
 }
 
 const mapStateToProps = (state) => {
-    const { contacts } = state.Chat;
-    return { contacts };
+    const { contacts, contact } = state.Chat;
+    return { contacts, contact };
 };
 
 export default (connect(mapStateToProps, {})(SelectContact));

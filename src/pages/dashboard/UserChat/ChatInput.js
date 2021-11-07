@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Input, Row, Col, UncontrolledTooltip, ButtonDropdown, DropdownToggle, DropdownMenu, Label, Form } from "reactstrap";
 import { Picker } from 'emoji-mart'
 import 'emoji-mart/css/emoji-mart.css'
+import FileList from "./FileList"
 
 function ChatInput(props) {
     const [textMessage, settextMessage] = useState("");
@@ -15,8 +16,15 @@ function ChatInput(props) {
     const toggle = () => setisOpen(!isOpen);
 
     //function for text input value change
-    const handleChange = e => {
+    const handleChange = async e => {
+        const Code = localStorage.getItem("authUser");
         settextMessage(e.target.value)
+        if (e.target.value !== "") {
+            await props.connection.invoke("IsTyping", props.active_user.Code, props.profile?.FullName, Code, props.profile?.Avatar)
+        }
+        else {
+            await removeTyping()
+        }
     }
 
     //function for add emojis
@@ -39,40 +47,58 @@ function ChatInput(props) {
         if (e.target.files.length !== 0)
             setfileImage(URL.createObjectURL(e.target.files[0]))
     }
+    const removeTyping = async () => {
+        const Code = localStorage.getItem("authUser");
+        await props.connection.invoke("NotIsTyping", props.active_user.Code, props.profile?.FullName, Code, props.profile?.Avatar)
+    }
+    useEffect(() => {
+        const listener = event => {
+            if (event.code === "Enter" || event.code === "NumpadEnter") {
+                console.log("Enter key was pressed. Run your function.");
+                onaddMessage(event)
+            }
+        };
+        document.addEventListener("keydown", listener);
+        return () => {
+            document.removeEventListener("keydown", listener);
+        };
+    }, [textMessage]);
 
-    //function for send data to onaddMessage function(in userChat/index.js component)
-    const onaddMessage = async (e, textMessage) => {
+    const onaddMessage = async (e) => {
         e.preventDefault();
         //if text value is not emptry then call onaddMessage function
-        // if (textMessage !== "") {
-        //     props.onaddMessage(textMessage, "textMessage");
-        //     settextMessage("");
-        // }
+        if (textMessage !== "") {
+            props.addMessageRealtime(props.active_user.Code, textMessage);
+            settextMessage("");
+            props.scrolltoBottom()
+            await removeTyping()
+        }
 
-        // //if file input value is not empty then call onaddMessage function
-        // if (file.name !== "") {
-        //     props.onaddMessage(file, "fileMessage");
-        //     setfile({
-        //         name: "",
-        //         size: ""
-        //     })
-        // }
+        //if file input value is not empty then call onaddMessage function
+        if (file.name !== "") {
+            // props.onaddMessage(file, "fileMessage");
+            setfile({
+                name: "",
+                size: ""
+            })
+        }
 
-        // //if image input value is not empty then call onaddMessage function
-        // if (fileImage !== "") {
-        //     props.onaddMessage(fileImage, "imageMessage");
-        //     setfileImage("")
-        // }
-        props.addMessageRealtime("345a71e7827c40f4b028502e76c1a3b0", textMessage);
+        //if image input value is not empty then call onaddMessage function
+        if (fileImage !== "") {
+            // props.onaddMessage(fileImage, "imageMessage");
+            setfileImage("")
+        }
     }
 
     return (
         <React.Fragment>
             <div className="p-3 p-lg-4 border-top mb-0">
-                <Form onSubmit={(e) => onaddMessage(e, textMessage)} >
+                <Form onSubmit={(e) => onaddMessage(e)} >
                     <Row noGutters>
                         <Col>
                             <div>
+                                {file?.name && <FileList hideControl fileName={file.name} fileSize={file.size} />}
+                                {fileImage && <img src={fileImage} width={55} height={55} style={{ marginBottom: "10px", paddingLeft: "0.5rem" }} />}
                                 <Input type="text" value={textMessage} onChange={handleChange} className="form-control form-control-lg bg-light border-light" placeholder="Enter Message..." />
                             </div>
                         </Col>

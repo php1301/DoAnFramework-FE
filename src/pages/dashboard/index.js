@@ -7,6 +7,7 @@ import { connect } from "react-redux";
 
 
 class Index extends Component {
+
     render() {
 
         return (
@@ -15,7 +16,7 @@ class Index extends Component {
                 <ChatLeftSidebar recentChatList={this.props.users} />
 
                 {/* user chat */}
-                <UserChat recentChatList={this.props.users} />
+                {this.props.active_user && <UserChat recentChatList={this.props.users} />}
 
             </React.Fragment>
         );
@@ -23,8 +24,8 @@ class Index extends Component {
 }
 
 const mapStateToProps = (state) => {
-    const { users } = state.Chat;
-    return { users };
+    const { users, active_user } = state.Chat;
+    return { users, active_user };
 };
 
 export default connect(mapStateToProps, {})(Index);

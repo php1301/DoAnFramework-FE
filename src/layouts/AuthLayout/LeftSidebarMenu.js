@@ -8,7 +8,6 @@ import { setActiveTab } from "../../redux/actions";
 
 //Import Images
 import logo from "../../assets/images/logo.svg"
-import avatar1 from "../../assets/images/users/avatar-1.jpg";
 
 //i18n
 import i18n from '../../i18n';
@@ -120,8 +119,13 @@ function LeftSidebarMenu(props) {
                         </UncontrolledTooltip>
                         <Dropdown nav isOpen={dropdownOpenMobile} toggle={toggleMobile} className="profile-user-dropdown d-inline-block d-lg-none">
                             <DropdownToggle nav>
-                                <img src={avatar1} alt="chatvia" className="profile-user rounded-circle" />
-                            </DropdownToggle>
+                                {props.profile?.Avatar === "Resource/no_img.jpg" ?
+                                    <div className="avatar-lg">
+                                        <span className="avatar-title rounded-circle bg-soft-primary text-primary font-size-24">
+                                            {props.profile?.FullName?.charAt(0)}
+                                        </span>
+                                    </div> :
+                                    <img src={`${process.env.REACT_APP_BASE_API_URL}/Auth/img?key=${props.profile?.Avatar}`} className="profile-user rounded-circle" alt="chatvia" />}                            </DropdownToggle>
                             <DropdownMenu className="dropdown-menu-end">
                                 <DropdownItem onClick={() => { toggleTab('profile'); }}>Profile <i className="ri-profile-line float-end text-muted"></i></DropdownItem>
                                 <DropdownItem onClick={() => { toggleTab('settings'); }}>Setting <i className="ri-settings-3-line float-end text-muted"></i></DropdownItem>
@@ -171,8 +175,13 @@ function LeftSidebarMenu(props) {
                         </li>
                         <Dropdown nav isOpen={dropdownOpen} className="nav-item btn-group dropup profile-user-dropdown" toggle={toggle}>
                             <DropdownToggle className="nav-link" tag="a">
-                                <img src={avatar1} alt="" className="profile-user rounded-circle" />
-                            </DropdownToggle>
+                                {props.profile?.Avatar === "Resource/no_img.jpg" ?
+                                    <div className="avatar-xs" style={{ margin: "0px auto" }}>
+                                        <span style={{ fontSize: "15px" }} className="avatar-title rounded-circle bg-soft-primary text-primary">
+                                            {props.profile?.FullName?.charAt(0)}
+                                        </span>
+                                    </div> :
+                                    <img src={`${process.env.REACT_APP_BASE_API_URL}/Auth/img?key=${props.profile?.Avatar}`} className="profile-user rounded-circle" alt="chatvia" />}                                    </DropdownToggle>
                             <DropdownMenu>
                                 <DropdownItem onClick={() => { toggleTab('profile'); }}>Profile <i className="ri-profile-line float-end text-muted"></i></DropdownItem>
                                 <DropdownItem onClick={() => { toggleTab('settings'); }}>Setting <i className="ri-settings-3-line float-end text-muted"></i></DropdownItem>
@@ -189,8 +198,10 @@ function LeftSidebarMenu(props) {
 }
 
 const mapStatetoProps = state => {
+    const { profile } = state.Auth
     return {
-        ...state.Layout
+        ...state.Layout,
+        profile,
     };
 };
 

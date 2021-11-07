@@ -6,7 +6,10 @@ import {
     REGISTER_USER_SUCCESS,
     FORGET_PASSWORD,
     FORGET_PASSWORD_SUCCESS,
-    API_FAILED
+    API_FAILED,
+    SET_PROFILE,
+    UPDATE_PROFILE,
+    GET_PROFILE
 } from './constants';
 
 
@@ -20,9 +23,9 @@ export const loginUserSuccess = (user) => ({
     payload: user
 });
 
-export const registerUser = (user) => ({
+export const registerUser = (user, history) => ({
     type: REGISTER_USER,
-    payload: { user }
+    payload: { user, history }
 });
 
 export const registerUserSuccess = (user) => ({
@@ -44,6 +47,21 @@ export const forgetPasswordSuccess = (passwordResetStatus) => ({
     type: FORGET_PASSWORD_SUCCESS,
     payload: passwordResetStatus
 });
+
+
+export const requestUserProfile = () => ({
+    type: GET_PROFILE,
+})
+
+export const setUserProfile = (payload) => ({
+    type: SET_PROFILE,
+    payload,
+})
+
+export const updateUserProfile = (payload) => ({
+    type: UPDATE_PROFILE,
+    payload,
+})
 
 export const apiError = (error) => ({
     type: API_FAILED,

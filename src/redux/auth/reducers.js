@@ -6,7 +6,8 @@ import {
     REGISTER_USER_SUCCESS,
     FORGET_PASSWORD,
     FORGET_PASSWORD_SUCCESS,
-    API_FAILED
+    API_FAILED,
+    SET_PROFILE
 } from './constants';
 
 import { getLoggedInUser } from '../../helpers/authUtils';
@@ -37,6 +38,10 @@ const Auth = (state = INIT_STATE, action) => {
         case FORGET_PASSWORD_SUCCESS:
             return { ...state, passwordResetStatus: action.payload, loading: false, error: null };
 
+        case SET_PROFILE:
+            return {
+                ...state, profile: action.payload
+            }
         case API_FAILED:
             return { ...state, loading: false, error: action.payload };
 

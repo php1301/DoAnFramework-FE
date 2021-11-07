@@ -1,6 +1,6 @@
 import { all, call, fork, put, takeEvery } from 'redux-saga/effects';
 import Cookie from "js-cookie"
-import { APIClient } from '../../helpers/apiClient';
+import { APIClient, setAuthorization } from '../../helpers/apiClient';
 import { getFirebaseBackend } from "../../helpers/firebase";
 
 
@@ -8,7 +8,9 @@ import {
     LOGIN_USER,
     LOGOUT_USER,
     REGISTER_USER,
-    FORGET_PASSWORD
+    FORGET_PASSWORD,
+    GET_PROFILE,
+    UPDATE_PROFILE
 } from './constants';
 
 
@@ -16,9 +18,11 @@ import {
     loginUserSuccess,
     registerUserSuccess,
     forgetPasswordSuccess,
-    apiError
+    apiError,
+    setUserProfile
 } from './actions';
 
+import { GetProfile, UpdateProfile } from '../../helpers/api-constant';
 
 //Initilize firebase
 const fireBaseBackend = getFirebaseBackend();
@@ -30,6 +34,8 @@ const fireBaseBackend = getFirebaseBackend();
  */
 
 const create = new APIClient().create;
+const get = new APIClient().get;
+const update = new APIClient().update;
 
 /**
  * Login the user
@@ -45,6 +51,7 @@ function* login({ payload: { username, password, history } }) {
             const response = yield call(create, '/Auth/auths/login', { username, password });
             const data = JSON.parse(response.data)
             localStorage.setItem("authUser", data.User);
+            localStorage.setItem("authFullName", data.FullName);
             Cookie.set("token", data.Token);
             yield put(loginUserSuccess(response));
         }
@@ -75,7 +82,7 @@ function* logout({ payload: { history } }) {
 /**
  * Register the user
  */
-function* register({ payload: { user } }) {
+function* register({ payload: { user, history } }) {
     try {
         const email = user.email;
         const password = user.password;
@@ -83,8 +90,12 @@ function* register({ payload: { user } }) {
             const response = yield call(fireBaseBackend.registerUser, email, password);
             yield put(registerUserSuccess(response));
         } else {
+            console.log(history)
             const response = yield call(create, '/Auth/auths/sign-up', user);
             yield put(registerUserSuccess(response));
+            yield call(() => {
+                history.push("/login");
+            });
         }
 
     } catch (error) {
@@ -116,6 +127,29 @@ function* forgetPassword({ payload: { email } }) {
 }
 
 
+function* getProfile() {
+    try {
+        setAuthorization()
+        const response = yield call(get, GetProfile)
+        yield put(setUserProfile(JSON.parse(response?.data)))
+    }
+    catch (e) {
+        yield put(apiError(e));
+    }
+}
+
+function* updateProfile(payload) {
+    try {
+        setAuthorization()
+        const { payload: data } = payload
+        yield call(update, UpdateProfile, data)
+        yield call(getProfile)
+    }
+    catch (e) {
+        yield put(apiError(e));
+    }
+}
+
 export function* watchLoginUser() {
     yield takeEvery(LOGIN_USER, login);
 }
@@ -132,12 +166,21 @@ export function* watchForgetPassword() {
     yield takeEvery(FORGET_PASSWORD, forgetPassword);
 }
 
+export function* watchGetProfile() {
+    yield takeEvery(GET_PROFILE, getProfile)
+}
+export function* watchUpdateProfile() {
+    yield takeEvery(UPDATE_PROFILE, updateProfile)
+}
+
 function* authSaga() {
     yield all([
         fork(watchLoginUser),
         fork(watchLogoutUser),
         fork(watchRegisterUser),
         fork(watchForgetPassword),
+        fork(watchGetProfile),
+        fork(watchUpdateProfile),
     ]);
 }
 

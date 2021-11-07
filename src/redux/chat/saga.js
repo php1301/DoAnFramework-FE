@@ -15,15 +15,33 @@ import {
 
 
 import {
+    activeUser,
     apiError, setChatHistory, setChatLogs, setContact, setSearchContact,
 } from './actions';
-import { AddContact, AddGroup, GetChatHistory, GetContact, GetMessageByContact, GetMessageByGroup, SearchContact, SendMessage } from '../../helpers/api-constant';
+import { AddContact, AddGroup, GetChatBoardInfo, GetChatHistory, GetContact, GetMessageByContact, GetMessageByGroup, SearchContact, SendMessage } from '../../helpers/api-constant';
 
 
 
 const create = new APIClient().create;
 const get = new APIClient().get;
 
+
+
+export function* getChatBoardInfo(groupCode, contactCode) {
+    try {
+        const data = yield call(get, GetChatBoardInfo, {
+            params: {
+                groupCode,
+                contactCode
+            }
+        });
+        yield put(activeUser(JSON.parse(data?.data)))
+    }
+    catch (e) {
+        yield put(apiError(e));
+
+    }
+}
 export function* getContactList() {
     try {
         setAuthorization()
@@ -39,7 +57,6 @@ export function* getContactList() {
 export function* searchContact(payload) {
     try {
         const { keySearch } = payload
-        console.log(keySearch)
         setAuthorization()
         const response = yield call(get, SearchContact, {
             params: {
@@ -55,7 +72,6 @@ export function* searchContact(payload) {
 export function* addContact(payload) {
     try {
         const { code, keyword } = payload
-        console.log(code)
         setAuthorization()
         const response = yield call(create, AddContact, { Code: code });
         console.log("Sent", response)
@@ -69,13 +85,15 @@ export function* addContact(payload) {
 
 export function* createGroup(payload) {
     try {
-        setAuthorization()
-        const { groupName, memberInNewGroup } = payload;
+        const { name: groupName, members: memberInNewGroup
+        } = payload.payload;
         const data = {
             Name: groupName,
             Users: memberInNewGroup,
         }
-        const response = call(create, AddGroup, data)
+        setAuthorization()
+        const response = yield call(create, AddGroup, data)
+        yield call(getChatHistory);
         console.log("Sent", response)
     }
     catch (e) {
@@ -84,16 +102,17 @@ export function* createGroup(payload) {
 }
 
 export function* getMessage(payload) {
-    console.log("run")
     const { groupCode, contactCode } = payload?.payload;
     setAuthorization()
     if (groupCode) {
         const data = yield call(getMessageByGroup, groupCode);
         yield put(setChatLogs(data))
+        yield call(getChatBoardInfo, groupCode)
     }
     else if (contactCode) {
         const data = yield call(getMessageByContact, contactCode);
         yield put(setChatLogs(data))
+        yield call(getChatBoardInfo, null, contactCode)
     }
 
 }
@@ -153,7 +172,6 @@ function* addMessage(payload) {
 
     }
     catch (error) {
-        console.log(error)
         yield put(apiError(error));
     }
 }

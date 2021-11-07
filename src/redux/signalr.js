@@ -1,7 +1,7 @@
 import config from "../config";
 import { eventChannel } from 'redux-saga';
 import { delay, select, put, call, take, spawn } from 'redux-saga/effects'
-import { chatLogs } from "./actions";
+import { chatLogs, getActiveUser, requestChatHistory, setConnection, setIsTyping } from "./actions";
 import * as signalR from "@microsoft/signalr";
 function* listenNotifications() {
   const connection = new signalR.HubConnectionBuilder()
@@ -29,17 +29,37 @@ function* listenNotifications() {
   }
 
   if (connected) {
+    yield put(setConnection(connection));
+    const connectionId = yield call(() => connection.invoke("getConnectionId"))
+    console.log(connectionId)
+    // const test = yield call(() => connection.invoke("IsTyping", ))
     const getEventChannel = connection => eventChannel(emit => {
       const handler = data => { emit(data) }
       connection.on('messageHubListener', handler)
+      connection.on('IsTyping', handler)
+      return () => { connection.off() }
+    })
+    const getIsTyping = connection => eventChannel(emit => {
+      const handler = data => { emit(data) }
       return () => { connection.off() }
     })
 
     const channel = yield call(getEventChannel, connection)
+    // const channelIsTyping = yield call(getIsTyping, connection)
     while (true) {
       const data = yield take(channel)
-      console.log(data);
-      yield put(chatLogs("345a71e7827c40f4b028502e76c1a3b0"))
+      // const data = yield take(channelIsTyping)
+      console.log(data)
+      if (data.text !== "sent")
+        yield put(setIsTyping(data))
+      const active_user = yield select(getActiveUser);
+      yield put(chatLogs(active_user.Code))
+      // if (active_user.IsGroup)
+      //   yield put(chatLogs(active_user.Code))
+      // else {
+      //   yield put(chatLogs(null, active_user.Code))
+      // }
+      yield put(requestChatHistory())
     }
   }
 }

@@ -13,7 +13,6 @@ class Index extends Component {
 
 
     render() {
-        console.log(this.props.data)
         return (
             <React.Fragment>
                 {/* chat left sidebar */}
@@ -22,7 +21,7 @@ class Index extends Component {
                     <div>{vl.Code}</div>
                 })} */}
                 {/* user chat */}
-                <UserChat recentChatList={this.props.users} />
+                {(this.props.active_user?.Code || this.props.active_user?.UserCode) && <UserChat recentChatList={this.props.users} />}
 
             </React.Fragment>
         );
@@ -31,8 +30,8 @@ class Index extends Component {
 
 const mapStateToProps = (state) => {
 
-    const { users, data } = state.Chat;
-    return { users, data };
+    const { users, data, active_user } = state.Chat;
+    return { users, data, active_user };
 };
 
 export default connect(mapStateToProps, { requestChatHistory })(Index);

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from "reactstrap";
 import { Link } from "react-router-dom";
+import { saveAs } from 'file-saver';
 
 //i18n
 import { useTranslation } from 'react-i18next';
@@ -9,7 +10,11 @@ function FileList(props) {
 
     /* intilize t variable for multi language implementation */
     const { t } = useTranslation();
-
+    const handleDownload = async (link) => {
+        const data = await fetch(link)
+        const blob = await data.blob()
+        saveAs(blob, props?.fileName);
+    }
     return (
         <React.Fragment>
             <Card className="p-2 mb-2">
@@ -25,25 +30,26 @@ function FileList(props) {
                             <p className="text-muted font-size-13 mb-0">{props.fileSize}</p>
                         </div>
                     </div>
-
-                    <div className="ms-4">
-                        <ul className="list-inline mb-0 font-size-20">
-                            <li className="list-inline-item">
-                                <Link to="#" className="text-muted">
-                                    <i className="ri-download-2-line"></i>
-                                </Link>
-                            </li>
-                            <UncontrolledDropdown tag="li" className="list-inline-item">
-                                <DropdownToggle tag="a" className="dropdown-toggle text-muted">
-                                    <i className="ri-more-fill"></i>
-                                </DropdownToggle>
-                                <DropdownMenu right>
-                                    <DropdownItem>{t('Share')} <i className="ri-share-line float-end text-muted"></i></DropdownItem>
-                                    <DropdownItem>{t('Delete')} <i className="ri-delete-bin-line float-end text-muted"></i></DropdownItem>
-                                </DropdownMenu>
-                            </UncontrolledDropdown>
-                        </ul>
-                    </div>
+                    {!props.hideControl &&
+                        <div className="ms-4">
+                            <ul className="list-inline mb-0 font-size-20">
+                                <li onClick={() => { handleDownload(props.path) }} className="list-inline-item">
+                                    <Link to="#" className="text-muted">
+                                        <i className="ri-download-2-line"></i>
+                                    </Link>
+                                </li>
+                                <UncontrolledDropdown tag="li" className="list-inline-item">
+                                    <DropdownToggle tag="a" className="dropdown-toggle text-muted">
+                                        <i className="ri-more-fill"></i>
+                                    </DropdownToggle>
+                                    <DropdownMenu right>
+                                        <DropdownItem>{t('Share')} <i className="ri-share-line float-end text-muted"></i></DropdownItem>
+                                        <DropdownItem>{t('Delete')} <i className="ri-delete-bin-line float-end text-muted"></i></DropdownItem>
+                                    </DropdownMenu>
+                                </UncontrolledDropdown>
+                            </ul>
+                        </div>
+                    }
                 </div>
             </Card>
         </React.Fragment>
