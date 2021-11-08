@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { connect } from "react-redux";
-import { Button, Card, Badge } from "reactstrap";
+import { Button, Card, Badge, Input, Label } from "reactstrap";
 
 //Simple bar
 import SimpleBar from "simplebar-react";
@@ -10,7 +10,7 @@ import AttachedFiles from "./AttachedFiles";
 import CustomCollapse from "./CustomCollapse";
 
 //actions
-import { closeUserSidebar } from "../redux/actions";
+import { closeUserSidebar, changeGroupAvatar } from "../redux/actions";
 
 //i18n
 import { useTranslation } from 'react-i18next';
@@ -23,16 +23,25 @@ function UserProfileSidebar(props) {
     const [isOpen1, setIsOpen1] = useState(true);
     const [isOpen2, setIsOpen2] = useState(false);
     const [isOpen3, setIsOpen3] = useState(false);
-    const [files] = useState([
-        { name: "Admin-A.zip", size: "12.5 MB", thumbnail: "ri-file-text-fill" },
-        { name: "Image-1.jpg", size: "4.2 MB", thumbnail: "ri-image-fill" },
-        { name: "Image-2.jpg", size: "3.1 MB", thumbnail: "ri-image-fill" },
-        { name: "Landing-A.zip", size: "6.7 MB", thumbnail: "ri-file-text-fill" },
-    ]);
-
+    const [isEditMode, setIsEditMode] = useState(false);
+    const [fileImage, setfileImage] = useState("")
+    const [base64FileImage, setBase64FileImage] = useState("")
     /* intilize t variable for multi language implementation */
     const { t } = useTranslation();
-
+    const handleImageChange = e => {
+        if (e.target.files.length !== 0) {
+            setBase64FileImage(e.target.files[0])
+            setfileImage(URL.createObjectURL(e.target.files[0]))
+        }
+    }
+    const blobToBase64 = () => {
+        if (base64FileImage)
+            return new Promise((resolve, _) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.readAsDataURL(base64FileImage);
+            });
+    }
     const toggleCollapse1 = () => {
         setIsOpen1(!isOpen1);
         setIsOpen2(false);
@@ -50,10 +59,25 @@ function UserProfileSidebar(props) {
         setIsOpen1(false);
         setIsOpen2(false);
     };
-
+    const handleUpdate = async () => {
+        setIsEditMode(false)
+        const avatar = await blobToBase64()
+        if (props.active_user?.Avatar !== "Resource/no_img.jpg" || avatar) {
+            const data = {
+                Avatar: avatar || props.active_user?.Avatar,
+                groupCode: props.active_user?.Code
+            }
+            props.changeGroupAvatar(data)
+        }
+    }
     // closes sidebar
     const closeuserSidebar = () => {
         props.closeUserSidebar();
+    }
+
+    const checkIsOnline = (mem) => {
+        const index = props?.active?.active.findIndex(i => i.code === mem.Code)
+        return index
     }
     // style={{display: props.userSidebar  ? "block" : "none"}}
     return (
@@ -66,26 +90,32 @@ function UserProfileSidebar(props) {
                         </Button>
                     </div>
                 </div>
-
                 <div className="text-center p-4 border-bottom">
 
-                    <div className="mb-4 d-flex justify-content-center">
-                        {
-                            props.activeUser.profilePicture === "Null" ?
+                    <div className="mb-4 profile-user input-file">
+                        {!fileImage ?
+                            props.active_user?.Avatar === "Resource/no_img.jpg" ?
                                 <div className="avatar-lg">
                                     <span className="avatar-title rounded-circle bg-soft-primary text-primary font-size-24">
-                                        {props.activeUser.name.charAt(0)}
+                                        {props.active_user?.Type === "multi" ? props.active_user?.Name?.charAt(1) : props.active_user?.FullName?.charAt(0)}
                                     </span>
                                 </div>
-                                : <img src={props.activeUser.profilePicture} className="rounded-circle avatar-lg img-thumbnail" alt="chatvia" />
+                                : <img src={`${process.env.REACT_APP_BASE_API_URL}/Auth/img?key=${props.active_user?.Avatar}`} className="rounded-circle avatar-lg img-thumbnail" alt="chatvia" />
+                            : <img src={fileImage || `${process.env.REACT_APP_BASE_API_URL}/Auth/img?key=${props.active_user?.Avatar}`} className="rounded-circle avatar-lg img-thumbnail" alt="chatvia" />
+                        }
+                        {isEditMode && <Button type="button" color="light" className="avatar-xs p-0 rounded-circle profile-photo-edit">
+                            <Label>
+                                <i className="ri-pencil-fill"></i>
+                                <Input onChange={(e) => handleImageChange(e)} accept="image/*" type="file" name="fileInput" size="60" />
+                            </Label>
+                        </Button>
                         }
 
                     </div>
-
-                    <h5 className="font-size-16 mb-1 text-truncate">{props.activeUser.name}</h5>
+                    <h5 className="font-size-16 mb-1 text-truncate">{props.active_user?.Name || props.active_user?.FullName}</h5>
                     <p className="text-muted text-truncate mb-1">
                         {(() => {
-                            switch (props.activeUser.status) {
+                            switch (props.active_user?.status) {
                                 case "online":
                                     return (
                                         <>
@@ -112,47 +142,59 @@ function UserProfileSidebar(props) {
                             }
                         })()}
 
-                                Active</p>
+                        Active</p>
                 </div>
                 {/* End profile user */}
 
                 {/* Start user-profile-desc */}
+
                 <SimpleBar style={{ maxHeight: "100%" }} className="p-4 user-profile-desc">
+                    <div className="float-end">
+                        {props.active_user?.IsGroup && (!isEditMode ? <Button color="light" size="sm" type="button" onClick={() => { setIsEditMode(true) }} ><i className="ri-edit-fill me-1 align-middle"></i> {t('Edit')}</Button>
+                            : <Button onClick={handleUpdate} color="light" size="sm" type="button" > {t('Done')}</Button>)
+                        }
+                    </div>
                     <div className="text-muted">
                         <p className="mb-4">"{t('If several languages coalesce, the grammar of the resulting language is more simple and regular than that of the individual.')}"</p>
                     </div>
 
                     <div id="profile-user-accordion" className="custom-accordion">
-                        <Card className="shadow-none border mb-2">
-                            {/* import collaps */}
-                            <CustomCollapse
-                                title="About"
-                                iconClass="ri-user-2-line"
-                                isOpen={isOpen1}
-                                toggleCollapse={toggleCollapse1}
-                            >
+                        {
+                            !props.active_user?.IsGroup &&
+                            <Card className="shadow-none border mb-2">
+                                {/* import collaps */}
+                                <CustomCollapse
+                                    title="About"
+                                    iconClass="ri-user-2-line"
+                                    isOpen={isOpen1}
+                                    toggleCollapse={toggleCollapse1}
+                                >
 
-                                <div>
-                                    <p className="text-muted mb-1">{t('Name')}</p>
-                                    <h5 className="font-size-14">{props.activeUser.name}</h5>
-                                </div>
+                                    <div>
+                                        <p className="text-muted mb-1">{t('Tên Người Dùng')}</p>
+                                        <h5 className="font-size-14">{props.active_user?.UserName}</h5>
+                                    </div>
+                                    <div>
+                                        <p className="text-muted mb-1">{t('Name')}</p>
+                                        <h5 className="font-size-14">{props.active_user?.Name || props.active_user?.FullName}</h5>
+                                    </div>
 
-                                <div className="mt-4">
-                                    <p className="text-muted mb-1">{t('Email')}</p>
-                                    <h5 className="font-size-14">{props.activeUser.email}</h5>
-                                </div>
+                                    <div className="mt-4">
+                                        <p className="text-muted mb-1">{t('Email')}</p>
+                                        <h5 className="font-size-14">{props.active_user?.Email}</h5>
+                                    </div>
 
-                                <div className="mt-4">
-                                    <p className="text-muted mb-1">{t('Time')}</p>
-                                    <h5 className="font-size-14">11:40 AM</h5>
-                                </div>
+                                    <div className="mt-4">
+                                        <p className="text-muted mb-1">{t('Sinh Nhật')}</p>
+                                        <h5 className="font-size-14">{props.active_user?.Dob}</h5>
+                                    </div>
 
-                                <div className="mt-4">
-                                    <p className="text-muted mb-1">{t('Location')}</p>
-                                    <h5 className="font-size-14 mb-0">California, USA</h5>
-                                </div>
-                            </CustomCollapse>
-                        </Card>
+                                    <div className="mt-4">
+                                        <p className="text-muted mb-1">{t('Số điện thoại')}</p>
+                                        <h5 className="font-size-14 mb-0">{props.active_user?.Phone}</h5>
+                                    </div>
+                                </CustomCollapse>
+                            </Card>}
                         {/* End About card */}
 
                         <Card className="mb-1 shadow-none border">
@@ -164,12 +206,12 @@ function UserProfileSidebar(props) {
                                 toggleCollapse={toggleCollapse2}
                             >
                                 {/* attached files */}
-                                <AttachedFiles files={files} />
+                                <AttachedFiles files={props.files} />
                             </CustomCollapse>
                         </Card>
 
                         {
-                            props.activeUser.isGroup === true &&
+                            props.active_user?.IsGroup &&
                             <Card className="mb-1 shadow-none border">
                                 {/* import collaps */}
                                 <CustomCollapse
@@ -178,58 +220,38 @@ function UserProfileSidebar(props) {
                                     isOpen={isOpen3}
                                     toggleCollapse={toggleCollapse3}
                                 >
-                                    <Card className="p-2 mb-2">
-                                        <div className="d-flex align-items-center">
-                                            <div className="chat-user-img align-self-center me-3">
-                                                <div className="avatar-xs">
-                                                    <span className="avatar-title rounded-circle bg-soft-primary text-primary">
-                                                        S
-                                                                                            </span>
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <div className="text-left">
-                                                    <h5 className="font-size-14 mb-1">{t('Sara Muller')}
-                                                        <Badge color="danger" className="badge-soft-danger float-end">{t('Admin')}</Badge>
-                                                    </h5>
-                                                    {/* <p className="text-muted font-size-13 mb-0">{member.status}</p> */}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </Card>
 
-                                    <Card className="p-2 mb-2">
-                                        <div className="d-flex align-items-center">
-                                            <div className="chat-user-img align-self-center me-3">
-                                                <div className="avatar-xs">
-                                                    <span className="avatar-title rounded-circle bg-soft-primary text-primary">
-                                                        O
-                                                                                            </span>
+                                    {props.active_user.Users.map(mem => {
+                                        return (
+                                            <Card className="p-2 mb-2">
+                                                <div className="d-flex align-items-center">
+                                                    {mem.Avatar !== "Resource/no_img.jpg" ? (<div className={` chat-user-img ${checkIsOnline(mem) !== -1 ? "online" : ""} chat-avatar`}>
+                                                        <img src={`${process.env.REACT_APP_BASE_API_URL}/Auth/img?key=${mem?.Avatar}`} className="rounded-circle chat-user-img avatar-xs" alt="chatvia" />
+                                                        {
+                                                            <span className="user-status"></span>
+                                                        }
+                                                    </div>) : (
+                                                        <div className={` chat-user-img ${checkIsOnline(mem) !== -1 ? "online" : ""} align-self-center`}>
+                                                            <div className="avatar-xs">
+                                                                <span className="avatar-title rounded-circle bg-soft-primary text-primary">
+                                                                    {mem.FullName.charAt(0)}
+                                                                </span>
+                                                            </div>
+                                                            {
+                                                                <span className="user-status"></span>
+                                                            }
+                                                        </div>)}
+                                                    <div>
+                                                        <div className="text-left">
+                                                            <h5 className="font-size-14 mb-1 ms-3">{mem.FullName}</h5>
+                                                            <p className="text-muted font-size-13 mb-0">{mem?.UserName}</p>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div>
-                                                <div className="text-left">
-                                                    <h5 className="font-size-14 mb-1">{t('Ossie Wilson')}</h5>
-                                                    {/* <p className="text-muted font-size-13 mb-0">{member.status}</p> */}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </Card>
+                                            </Card>
+                                        )
+                                    })}
 
-                                    <Card className="p-2 mb-2">
-                                        <div className="d-flex align-items-center">
-                                            <div className="chat-avatar">
-
-                                                <img src={avatar7} className="rounded-circle chat-user-img avatar-xs me-3" alt="chatvia" />
-                                            </div>
-                                            <div>
-                                                <div className="text-left">
-                                                    <h5 className="font-size-14 mb-1">{t('Paul Haynes')}</h5>
-                                                    {/* <p className="text-muted font-size-13 mb-0">{member.status}</p> */}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </Card>
                                 </CustomCollapse>
                             </Card>
                         }
@@ -244,9 +266,9 @@ function UserProfileSidebar(props) {
 }
 
 const mapStateToProps = (state) => {
-    const { users, active_user } = state.Chat;
+    const { users, active_user, files, active } = state.Chat;
     const { userSidebar } = state.Layout;
-    return { users, active_user, userSidebar };
+    return { users, active_user, userSidebar, files, active };
 };
 
-export default connect(mapStateToProps, { closeUserSidebar })(UserProfileSidebar);
+export default connect(mapStateToProps, { closeUserSidebar, changeGroupAvatar })(UserProfileSidebar);

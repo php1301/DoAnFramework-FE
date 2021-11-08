@@ -48,7 +48,7 @@ const Register = (props) => {
                 .required('Thông tin bắt buộc')
         }),
         onSubmit: values => {
-            props.registerUser(values);
+            props.registerUser(values, props.history);
         },
     });
 

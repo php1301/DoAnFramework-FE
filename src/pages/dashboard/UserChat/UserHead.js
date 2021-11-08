@@ -39,6 +39,22 @@ function UserHead(props) {
 
         props.setFullUser(copyallUsers);
     }
+    const containUsersOnline = (code) => {
+        const data = props?.active?.active?.length > 0 && props?.active?.active?.filter(c => c.code !== props?.active.userCode)
+        const index = data?.length > 0 && data?.findIndex(i => i.code === code)
+        return index
+    }
+    const containUsersOnlineGroup = () => {
+        let flag = 1
+        const data = props.active?.active?.length > 0 && props?.active?.active?.filter(c => c.code !== props?.active.userCode)
+        data?.length > 0 && data?.every(c => {
+            const exists = props?.active_user?.Users.findIndex(i => i.Code === c.code)
+            if (exists !== -1) {
+                flag = 2;
+            }
+        })
+        return flag;
+    }
 
     return (
         <React.Fragment>
@@ -51,14 +67,14 @@ function UserHead(props) {
                                     <i className="ri-arrow-left-s-line"></i></Link>
                             </div>
                             {
-                                props.users[props.active_user].profilePicture !== "Null" ?
+                                props.active_user?.Avatar !== "Resource/no_img.jpg" ?
                                     <div className="me-3 ms-0">
-                                        <img src={props.users[props.active_user].profilePicture} className="rounded-circle avatar-xs" alt="chatvia" />
+                                        <img src={`${process.env.REACT_APP_BASE_API_URL}/Auth/img?key=${props.active_user?.Avatar}`} className="rounded-circle avatar-xs" alt="chatvia" />
                                     </div>
                                     : <div className="chat-user-img align-self-center me-3">
                                         <div className="avatar-xs">
                                             <span className="avatar-title rounded-circle bg-soft-primary text-primary">
-                                                {props.users[props.active_user].name.charAt(0)}
+                                                {props.active_user?.IsGroup ? props.active_user?.Name?.charAt(1) : props.active_user?.FullName?.charAt(0)}
                                             </span>
                                         </div>
                                     </div>
@@ -67,35 +83,17 @@ function UserHead(props) {
                             <div className="flex-1 overflow-hidden">
                                 <h5 className="font-size-16 mb-0 text-truncate">
                                     <Link to="#" onClick={(e) => openUserSidebar(e)} className="text-reset user-profile-show">
-                                        {props.users[props.active_user].name}
+                                        {props.active_user?.Name || props.active_user?.FullName}
                                     </Link>
-                                    {(() => {
-                                        switch (props.users[props.active_user].status) {
-                                            case "online":
-                                                return (
-                                                    <>
-                                                        <i className="ri-record-circle-fill font-size-10 text-success d-inline-block ms-1"></i>
-                                                    </>
-                                                )
-
-                                            case "away":
-                                                return (
-                                                    <>
-                                                        <i className="ri-record-circle-fill font-size-10 text-warning d-inline-block ms-1"></i>
-                                                    </>
-                                                )
-
-                                            case "offline":
-                                                return (
-                                                    <>
-                                                        <i className="ri-record-circle-fill font-size-10 text-secondary d-inline-block ms-1"></i>
-                                                    </>
-                                                )
-
-                                            default:
-                                                return;
-                                        }
-                                    })()}
+                                    {props.active_user?.IsGroup ? (containUsersOnlineGroup() === 2 ? <>
+                                        <i className="ri-record-circle-fill font-size-10 text-success d-inline-block ms-1"></i>
+                                    </> : <>
+                                        <i className="ri-record-circle-fill font-size-10 text-secondary d-inline-block ms-1"></i>
+                                    </>) : (containUsersOnline(props.active_user?.UserCode) !== -1 ? <>
+                                        <i className="ri-record-circle-fill font-size-10 text-success d-inline-block ms-1"></i>
+                                    </> : <>
+                                        <i className="ri-record-circle-fill font-size-10 text-secondary d-inline-block ms-1"></i>
+                                    </>)}
 
                                 </h5>
                             </div>
@@ -223,8 +221,8 @@ function UserHead(props) {
 
 
 const mapStateToProps = (state) => {
-    const { users, active_user } = state.Chat;
-    return { ...state.Layout, users, active_user };
+    const { users, active_user, active } = state.Chat;
+    return { ...state.Layout, users, active_user, active };
 };
 
 export default connect(mapStateToProps, { openUserSidebar, setFullUser })(UserHead);

@@ -5,7 +5,7 @@ import SimpleBar from "simplebar-react";
 import { connect } from "react-redux";
 
 import { withTranslation } from 'react-i18next';
-import { addContact, requestContactList, searchContact } from '../../../redux/chat/actions';
+import { addContact, requestContactList, searchContact, chatLogs } from '../../../redux/chat/actions';
 
 //use sortedContacts variable as global variable to sort contacts
 class Contacts extends Component {
@@ -30,11 +30,45 @@ class Contacts extends Component {
         const keyword = document.getElementById("addcontactemail-input")?.value
         if (keyword)
             this.props.searchContact(keyword)
-        console.log(this.props.searchContacts)
     }
     handleAddContact = (code) => {
         const keyword = document.getElementById("addcontactemail-input")?.value
         this.props.addContact({ code, keyword });
+    }
+    // handleSearchContact = (e) => {
+    //     this.setState({ searchContact: e.target.value });
+    //     const search = e.target.value;
+    //     let conversation = this.state.contactLists;
+    //     let filtered = []
+    //     //find conversation name from array
+    //     console.group(conversation)
+    //     conversation?.forEach(i => {
+    //         let filteredArray = [];
+    //         i.children.forEach(x => {
+    //             if (x?.FullName?.toLowerCase().includes(search) || x?.FullName?.toUpperCase().includes(search))
+    //                 filteredArray.push(x);
+    //         })
+    //         const index = filtered.findIndex(y => y?.group === i?.group)
+    //         if (index === -1) {
+    //             filtered.push({
+    //                 group: i?.group,
+    //                 children: filteredArray
+    //             })
+    //         }
+    //     })
+    //     console.log(filtered)
+    //     //set filtered items to state
+    //     this.setState({ contactLists: filtered })
+
+    //     //if input value is blanck then assign whole recent chatlist to array
+    //     if (search === "") this.setState({ contactLists: this.props.contact })
+    // }
+    handleText = (contact) => {
+        console.log(contact)
+        this.props.chatLogs(null, contact.Code, true)
+    }
+    handleCall = (contact) => {
+
     }
     render() {
         const { t, contact } = this.props;
@@ -74,6 +108,17 @@ class Contacts extends Component {
                                                 {this.props.searchContacts?.map(s => {
                                                     return (
                                                         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
+                                                            {s?.Avatar !== "Resource/no_img.jpg" ?
+                                                                <div className="me-3 ms-0">
+                                                                    <img src={`${process.env.REACT_APP_BASE_API_URL}/Auth/img?key=${s?.Avatar}`} className="rounded-circle avatar-xs" alt="chatvia" />
+                                                                </div>
+                                                                : <div className="chat-user-img align-self-center me-3">
+                                                                    <div className="avatar-xs">
+                                                                        <span className="avatar-title rounded-circle bg-soft-primary text-primary">
+                                                                            {s?.FullName?.charAt(0)}
+                                                                        </span>
+                                                                    </div>
+                                                                </div>}
                                                             <p>{s.FullName}</p>
                                                             <span onClick={() => { this.handleAddContact(s.Code) }} style={{ width: "30px", height: "30px", cursor: "pointer" }} className="avatar-title rounded-circle bg-soft-primary text-primary">
                                                                 <i class="mdi mdi-plus"></i>
@@ -103,7 +148,7 @@ class Contacts extends Component {
                                 <Button color="link" className="text-decoration-none text-muted pr-1" type="button">
                                     <i className="ri-search-line search-icon font-size-18"></i>
                                 </Button>
-                                <Input type="text" className="form-control bg-light " placeholder={t('Search users..')} />
+                                <Input onChange={this.handleSearchContact} type="text" className="form-control bg-light " placeholder={t('Search users..')} />
                             </InputGroup>
                         </div>
                         {/* End search-box */}
@@ -125,6 +170,17 @@ class Contacts extends Component {
                                             contact.children.map((child, key) =>
                                                 <li key={key} >
                                                     <div className="d-flex align-items-center">
+                                                        {child?.Avatar !== "Resource/no_img.jpg" ?
+                                                            <div className="me-3 ms-0">
+                                                                <img src={`${process.env.REACT_APP_BASE_API_URL}/Auth/img?key=${child?.Avatar}`} className="rounded-circle avatar-xs" alt="chatvia" />
+                                                            </div>
+                                                            : <div className="chat-user-img align-self-center me-3">
+                                                                <div className="avatar-xs">
+                                                                    <span className="avatar-title rounded-circle bg-soft-primary text-primary">
+                                                                        {child?.FullName?.charAt(0)}
+                                                                    </span>
+                                                                </div>
+                                                            </div>}
                                                         <div className="flex-1">
 
                                                             <h5 className="font-size-14 m-0">{child.FullName}</h5>
@@ -134,8 +190,8 @@ class Contacts extends Component {
                                                                 <i className="ri-more-2-fill"></i>
                                                             </DropdownToggle>
                                                             <DropdownMenu className="dropdown-menu-end">
-                                                                <DropdownItem>{t('Share')} <i className="ri-share-line float-end text-muted"></i></DropdownItem>
-                                                                <DropdownItem>{t('Block')} <i className="ri-forbid-line float-end text-muted"></i></DropdownItem>
+                                                                <DropdownItem onClick={() => this.handleText(child)}>{t('Nhắn tin')} <i className="ri-message-line float-end text-muted"></i></DropdownItem>
+                                                                <DropdownItem onClick={() => this.handleCall(child)}>{t('Gọi điện')} <i className="ri-phone-line float-end text-muted"></i></DropdownItem>
                                                                 <DropdownItem>{t('Remove')} <i className="ri-delete-bin-line float-end text-muted"></i></DropdownItem>
                                                             </DropdownMenu>
                                                         </UncontrolledDropdown>
@@ -161,4 +217,4 @@ const mapStateToProps = (state) => {
     return { contact, searchContacts };
 };
 
-export default connect(mapStateToProps, { addContact, requestContactList, searchContact })(withTranslation()(Contacts));
+export default connect(mapStateToProps, { addContact, requestContactList, searchContact, chatLogs })(withTranslation()(Contacts));

@@ -54,7 +54,7 @@ class Groups extends Component {
     createGroup() {
         if (this.state.selectedContact.length > 2) {
             // gourpId : 5, name : "#Project-aplha", profilePicture : "Null", isGroup : true, unRead : 0, isNew : true, desc : "project related Group",
-            var obj = {
+            let obj = {
                 gourpId: this.state.groups.length + 1,
                 name: "#" + this.state.groupName,
                 profilePicture: "Null",
@@ -83,11 +83,11 @@ class Groups extends Component {
     }
 
     handleCheck(e, contactId) {
-        var selected = this.state.selectedContact;
-        var obj;
+        let selected = this.state.selectedContact;
+        let obj;
         if (e.target.checked) {
             obj = {
-                id: contactId,
+                Code: contactId,
                 name: e.target.value
             };
             selected.push(obj);

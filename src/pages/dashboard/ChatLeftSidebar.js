@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from "react-redux";
 
 import { TabContent, TabPane } from "reactstrap";
@@ -10,20 +10,25 @@ import Groups from "./Tabs/Groups";
 import Contacts from "./Tabs/Contacts";
 import Settings from "./Tabs/Settings";
 
+import { requestUserProfile, updateUserProfile } from "../../redux/actions"
+
 function ChatLeftSidebar(props) {
 
     const activeTab = props.activeTab;
-
+    useEffect(() => {
+        props.requestUserProfile()
+    }, [])
     return (
         <React.Fragment>
             <div className="chat-leftsidebar me-lg-1">
 
                 <TabContent activeTab={activeTab}>
                     {/* Start Profile tab-pane */}
-                    <TabPane tabId="profile" id="pills-user">
+                    {props?.profile && <TabPane tabId="profile" id="pills-user">
                         {/* profile content  */}
-                        <Profile />
+                        <Profile profile={props?.profile} />
                     </TabPane>
+                    }
                     {/* End Profile tab-pane  */}
 
                     {/* Start chats tab-pane  */}
@@ -48,10 +53,11 @@ function ChatLeftSidebar(props) {
                     {/* End contacts tab-pane */}
 
                     {/* Start settings tab-pane */}
-                    <TabPane tabId="settings" id="pills-setting">
+                    {props?.profile && <TabPane tabId="settings" id="pills-setting">
                         {/* Settings content */}
-                        <Settings />
+                        <Settings profile={props?.profile} updateUserProfile={props?.updateUserProfile} />
                     </TabPane>
+                    }
                     {/* End settings tab-pane */}
                 </TabContent>
                 {/* end tab content */}
@@ -62,9 +68,11 @@ function ChatLeftSidebar(props) {
 }
 
 const mapStatetoProps = state => {
+    const { profile } = state.Auth
     return {
-        ...state.Layout
+        ...state.Layout,
+        profile
     };
 };
 
-export default connect(mapStatetoProps, null)(ChatLeftSidebar);
+export default connect(mapStatetoProps, { requestUserProfile, updateUserProfile })(ChatLeftSidebar);

@@ -54,14 +54,14 @@ class APIClient {
      * Updates data
      */
     update = (url, data) => {
-        return axios.patch(url, data);
+        return axios.put(url, data);
     }
 
     /**
      * Delete 
      */
     delete = (url) => {
-        return axios.put(url);
+        return axios.delete(url);
     }
 }
 

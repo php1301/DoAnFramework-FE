@@ -7,13 +7,13 @@ import SimpleBar from "simplebar-react";
 //Import components
 import CustomCollapse from "../../../components/CustomCollapse";
 
-//Import Images
-import avatar1 from "../../../assets/images/users/avatar-1.jpg";
-
 //i18n
 import { useTranslation } from 'react-i18next';
 
 function Settings(props) {
+    const [isEditMode, setIsEditMode] = useState(false);
+    const [fileImage, setfileImage] = useState("")
+    const [base64FileImage, setBase64FileImage] = useState("")
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [isOpen1, setIsOpen1] = useState(true);
     const [isOpen2, setIsOpen2] = useState(false);
@@ -22,7 +22,12 @@ function Settings(props) {
 
     /* intilize t variable for multi language implementation */
     const { t } = useTranslation();
-
+    const handleImageChange = e => {
+        if (e.target.files.length !== 0) {
+            setBase64FileImage(e.target.files[0])
+            setfileImage(URL.createObjectURL(e.target.files[0]))
+        }
+    }
     const toggleCollapse1 = () => {
         setIsOpen1(!isOpen1);
         setIsOpen2(false);
@@ -52,7 +57,32 @@ function Settings(props) {
     };
 
     const toggle = () => setDropdownOpen(!dropdownOpen);
-
+    const blobToBase64 = () => {
+        if (base64FileImage)
+            return new Promise((resolve, _) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.readAsDataURL(base64FileImage);
+            });
+    }
+    const handleUpdate = async () => {
+        setIsEditMode(false)
+        const name = document.getElementById("edit-name").value
+        const email = document.getElementById("edit-email").value
+        const phone = document.getElementById("edit-phone").value
+        const address = document.getElementById("edit-address").value
+        const avatar = await blobToBase64()
+        if (props?.profile?.Avatar || avatar) {
+            const data = {
+                Address: address || props.profile?.Address,
+                Avatar: avatar || props.profile?.Avatar,
+                Email: email || props.profile?.Email,
+                FullName: name || props.profile?.FullName,
+                Phone: phone || props.profile?.Phone,
+            }
+            props.updateUserProfile(data)
+        }
+    }
     return (
         <React.Fragment>
             <div>
@@ -61,15 +91,29 @@ function Settings(props) {
                 </div>
 
                 <div className="text-center border-bottom p-4">
-                    <div className="mb-4 profile-user">
-                        <img src={avatar1} className="rounded-circle avatar-lg img-thumbnail" alt="chatvia" />
-                        <Button type="button" color="light" className="avatar-xs p-0 rounded-circle profile-photo-edit">
-                            <i className="ri-pencil-fill"></i>
+                    <div className="mb-4 profile-user input-file">
+                        {
+                            fileImage ?
+                                props.profile?.Avatar === "Resource/no_img.jpg" ?
+                                    <div className="avatar-lg">
+                                        <span className="avatar-title rounded-circle bg-soft-primary text-primary font-size-24">
+                                            {props.profile?.FullName?.charAt(0)}
+                                        </span>
+                                    </div> :
+                                    <img src={fileImage || `${process.env.REACT_APP_BASE_API_URL}/Auth/img?key=${props.profile?.Avatar}`} className="rounded-circle avatar-lg img-thumbnail" alt="chatvia" />
+                                : <img src={fileImage || `${process.env.REACT_APP_BASE_API_URL}/Auth/img?key=${props.profile?.Avatar}`} className="rounded-circle avatar-lg img-thumbnail" alt="chatvia" />
+                        }
+                        {isEditMode && <Button type="button" color="light" className="avatar-xs p-0 rounded-circle profile-photo-edit">
+                            <Label>
+                                <i className="ri-pencil-fill"></i>
+                                <Input onChange={(e) => handleImageChange(e)} accept="image/*" type="file" name="fileInput" size="60" />
+                            </Label>
                         </Button>
+                        }
 
                     </div>
 
-                    <h5 className="font-size-16 mb-1 text-truncate">{t('Patricia Smith')}</h5>
+                    <h5 className="font-size-16 mb-1 text-truncate">{props.profile.FullName}</h5>
                     <Dropdown isOpen={dropdownOpen} toggle={toggle} className="d-inline-block mb-1">
                         <DropdownToggle tag="a" className="text-muted pb-1 d-block" >
                             {t('Available')} <i className="mdi mdi-chevron-down"></i>
@@ -87,7 +131,7 @@ function Settings(props) {
                 <SimpleBar style={{ maxHeight: "100%" }} className="p-4 user-profile-desc">
 
                     <div id="profile-setting-accordion" className="custom-accordion">
-                        <Card className="shadow-none border mb-2">
+                        {!isEditMode ? <Card className="shadow-none border mb-2">
                             <CustomCollapse
                                 title="Personal Info"
                                 isOpen={isOpen1}
@@ -95,30 +139,63 @@ function Settings(props) {
                             >
 
                                 <div className="float-end">
-                                    <Button color="light" size="sm" type="button" ><i className="ri-edit-fill me-1 align-middle"></i> {t('Edit')}</Button>
+                                    <Button color="light" size="sm" type="button" onClick={() => { setIsEditMode(true) }} ><i className="ri-edit-fill me-1 align-middle"></i> {t('Edit')}</Button>
                                 </div>
 
                                 <div>
                                     <p className="text-muted mb-1">{t('Name')}</p>
-                                    <h5 className="font-size-14">{t('Patricia Smith')}</h5>
+                                    <h5 className="font-size-14">{props.profile?.FullName}</h5>
                                 </div>
 
                                 <div className="mt-4">
                                     <p className="text-muted mb-1">{t('Email')}</p>
-                                    <h5 className="font-size-14">{t('adc@123.com')}</h5>
+                                    <h5 className="font-size-14">{props.profile?.Email}</h5>
                                 </div>
 
                                 <div className="mt-4">
-                                    <p className="text-muted mb-1">{t('Time')}</p>
-                                    <h5 className="font-size-14">{t('11:40 AM')}</h5>
+                                    <p className="text-muted mb-1">{t('Số Điện Thoại')}</p>
+                                    <h5 className="font-size-14">{props.profile?.Phone}</h5>
                                 </div>
 
                                 <div className="mt-4">
-                                    <p className="text-muted mb-1">{t('Location')}</p>
-                                    <h5 className="font-size-14 mb-0">{t('California, USA')}</h5>
+                                    <p className="text-muted mb-1">{t('Địa chỉ')}</p>
+                                    <h5 className="font-size-14 mb-0">{props.profile?.Address}</h5>
                                 </div>
                             </CustomCollapse>
-                        </Card>
+                        </Card> :
+                            <Card className="shadow-none border mb-2">
+                                <CustomCollapse
+                                    title="Personal Info"
+                                    isOpen={isOpen1}
+                                    toggleCollapse={toggleCollapse1}
+                                >
+
+                                    <div className="float-end">
+                                        <Button onClick={handleUpdate} color="light" size="sm" type="button" > {t('Done')}</Button>
+                                    </div>
+
+                                    <div>
+                                        <p className="text-muted mb-1">{t('Name')}</p>
+                                        <input id="edit-name" className="font-size-14" defaultValue={props.profile?.FullName} />
+                                    </div>
+
+                                    <div className="mt-4">
+                                        <p className="text-muted mb-1">{t('Email')}</p>
+                                        <input disabled id="edit-email" type="text" className="font-size-14" defaultValue={props.profile?.Email} />
+                                    </div>
+
+                                    <div className="mt-4">
+                                        <p className="text-muted mb-1">{t('Số Điện Thoại')}</p>
+                                        <input id="edit-phone" type="text" className="font-size-14" defaultValue={props.profile?.Phone} />
+                                    </div>
+
+                                    <div className="mt-4">
+                                        <p className="text-muted mb-1">{t('Địa chỉ')}</p>
+                                        <input id="edit-address" type="text" className="font-size-14" defaultValue={props.profile?.Address} />
+                                    </div>
+                                </CustomCollapse>
+                            </Card>
+                        }
                         {/* end profile card */}
 
                         <Card className="shadow-none border mb-2">
