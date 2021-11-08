@@ -35,10 +35,10 @@ function ImageItem(props) {
                     <li className="list-inline-item message-img-list">
                         <div>
                             <Link to="#" onClick={() => toggleLightbox(`${process.env.REACT_APP_BASE_API_URL}/Auth/img?key=${image}`)} className="popup-img d-inline-block m-1" title={props.title}>
-                                <img src={`${process.env.REACT_APP_BASE_API_URL}/Auth/img?key=${image}`} alt="chat" className="rounded border" />
+                                {props.local ? <img src={image} alt="chat" className="rounded border" width={50} height={50} /> : <img src={`${process.env.REACT_APP_BASE_API_URL}/Auth/img?key=${image}`} alt="chat" className="rounded border" />}
                             </Link>
                         </div>
-                        <div className="message-img-link">
+                        {!props.local && <div className="message-img-link">
                             <ul className="list-inline mb-0">
                                 <li onClick={() => {
                                     handleDownload(`${process.env.REACT_APP_BASE_API_URL}/Auth/img?key=${image}`)
@@ -60,6 +60,7 @@ function ImageItem(props) {
                                 </UncontrolledDropdown>
                             </ul>
                         </div>
+                        }
                     </li>
                 }
 

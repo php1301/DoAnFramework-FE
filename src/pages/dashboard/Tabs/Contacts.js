@@ -35,10 +35,37 @@ class Contacts extends Component {
         const keyword = document.getElementById("addcontactemail-input")?.value
         this.props.addContact({ code, keyword });
     }
+    // handleSearchContact = (e) => {
+    //     this.setState({ searchContact: e.target.value });
+    //     const search = e.target.value;
+    //     let conversation = this.state.contactLists;
+    //     let filtered = []
+    //     //find conversation name from array
+    //     console.group(conversation)
+    //     conversation?.forEach(i => {
+    //         let filteredArray = [];
+    //         i.children.forEach(x => {
+    //             if (x?.FullName?.toLowerCase().includes(search) || x?.FullName?.toUpperCase().includes(search))
+    //                 filteredArray.push(x);
+    //         })
+    //         const index = filtered.findIndex(y => y?.group === i?.group)
+    //         if (index === -1) {
+    //             filtered.push({
+    //                 group: i?.group,
+    //                 children: filteredArray
+    //             })
+    //         }
+    //     })
+    //     console.log(filtered)
+    //     //set filtered items to state
+    //     this.setState({ contactLists: filtered })
 
+    //     //if input value is blanck then assign whole recent chatlist to array
+    //     if (search === "") this.setState({ contactLists: this.props.contact })
+    // }
     handleText = (contact) => {
         console.log(contact)
-        this.props.chatLogs(null, contact.Code)
+        this.props.chatLogs(null, contact.Code, true)
     }
     handleCall = (contact) => {
 
@@ -121,7 +148,7 @@ class Contacts extends Component {
                                 <Button color="link" className="text-decoration-none text-muted pr-1" type="button">
                                     <i className="ri-search-line search-icon font-size-18"></i>
                                 </Button>
-                                <Input type="text" className="form-control bg-light " placeholder={t('Search users..')} />
+                                <Input onChange={this.handleSearchContact} type="text" className="form-control bg-light " placeholder={t('Search users..')} />
                             </InputGroup>
                         </div>
                         {/* End search-box */}

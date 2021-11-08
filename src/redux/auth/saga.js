@@ -55,6 +55,7 @@ function* login({ payload: { username, password, history } }) {
             Cookie.set("token", data.Token);
             yield put(loginUserSuccess(response));
         }
+        history.go(0)
         history.push('/dashboard');
     } catch (error) {
         yield put(apiError(error));

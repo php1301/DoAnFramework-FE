@@ -72,14 +72,16 @@ function Settings(props) {
         const phone = document.getElementById("edit-phone").value
         const address = document.getElementById("edit-address").value
         const avatar = await blobToBase64()
-        const data = {
-            Address: address || props.profile?.Address,
-            Avatar: avatar || props.profile?.Avatar,
-            Email: email || props.profile?.Email,
-            FullName: name || props.profile?.FullName,
-            Phone: phone || props.profile?.Phone,
+        if (props?.profile?.Avatar || avatar) {
+            const data = {
+                Address: address || props.profile?.Address,
+                Avatar: avatar || props.profile?.Avatar,
+                Email: email || props.profile?.Email,
+                FullName: name || props.profile?.FullName,
+                Phone: phone || props.profile?.Phone,
+            }
+            props.updateUserProfile(data)
         }
-        props.updateUserProfile(data)
     }
     return (
         <React.Fragment>
@@ -90,13 +92,17 @@ function Settings(props) {
 
                 <div className="text-center border-bottom p-4">
                     <div className="mb-4 profile-user input-file">
-                        {props.profile?.Avatar === "Resource/no_img.jpg" ?
-                            <div className="avatar-lg">
-                                <span className="avatar-title rounded-circle bg-soft-primary text-primary font-size-24">
-                                    {props.profile?.FullName?.charAt(0)}
-                                </span>
-                            </div> :
-                            <img src={fileImage || `${process.env.REACT_APP_BASE_API_URL}/Auth/img?key=${props.profile?.Avatar}`} className="rounded-circle avatar-lg img-thumbnail" alt="chatvia" />}
+                        {
+                            fileImage ?
+                                props.profile?.Avatar === "Resource/no_img.jpg" ?
+                                    <div className="avatar-lg">
+                                        <span className="avatar-title rounded-circle bg-soft-primary text-primary font-size-24">
+                                            {props.profile?.FullName?.charAt(0)}
+                                        </span>
+                                    </div> :
+                                    <img src={fileImage || `${process.env.REACT_APP_BASE_API_URL}/Auth/img?key=${props.profile?.Avatar}`} className="rounded-circle avatar-lg img-thumbnail" alt="chatvia" />
+                                : <img src={fileImage || `${process.env.REACT_APP_BASE_API_URL}/Auth/img?key=${props.profile?.Avatar}`} className="rounded-circle avatar-lg img-thumbnail" alt="chatvia" />
+                        }
                         {isEditMode && <Button type="button" color="light" className="avatar-xs p-0 rounded-circle profile-photo-edit">
                             <Label>
                                 <i className="ri-pencil-fill"></i>

@@ -1,6 +1,7 @@
 import { all } from 'redux-saga/effects';
 import authSaga from './auth/saga';
 import chatSaga from './chat/saga';
+// import { pollSagaWatcher } from './polling-saga';
 import { startApp } from './signalr';
 
 
@@ -9,5 +10,6 @@ export default function* rootSaga(getState) {
         chatSaga(),
         authSaga(),
         startApp(),
+        // pollSagaWatcher(),
     ]);
 }

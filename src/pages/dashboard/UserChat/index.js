@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { DropdownMenu, DropdownItem, DropdownToggle, UncontrolledDropdown, Modal, ModalHeader, ModalBody, CardBody, Button, ModalFooter } from "reactstrap";
+import { DropdownMenu, DropdownItem, DropdownToggle, UncontrolledDropdown, Modal, ModalHeader, ModalBody, CardBody, Button, ModalFooter, UncontrolledTooltip } from "reactstrap";
 import { connect } from "react-redux";
 import { DateTime } from 'luxon';
 import SimpleBar from "simplebar-react";
@@ -203,6 +203,7 @@ function UserChat(props) {
                                                                         </div>
                                                                         : <img src={`${process.env.REACT_APP_BASE_API_URL}/Auth/img?key=${dt?.UserCreatedBy?.Avatar}`} alt="chatvia" />
                                                                 }
+                                                                <span className="user-status"></span>
                                                             </div>
 
                                                             <div className="user-chat-content">
@@ -249,6 +250,38 @@ function UserChat(props) {
                                                                 </div>
                                                                 {
                                                                     <div className="conversation-name">{dt.UserCreatedBy.FullName}</div>
+                                                                }
+                                                                {props.seen?.messageId === dt?.Id &&
+                                                                    <ul className="list-inline mb-0 ms-0">
+                                                                        {props?.seen?.messageSeens?.length > 0 && props?.seen?.messageSeens.map((ms, idx) => {
+                                                                            return (
+                                                                                <li id={`bubble-${idx}`} key={ms?.created} className="list-inline-item input-file">
+                                                                                    <div className="chat-avatar">
+                                                                                        {
+                                                                                            ms?.avatar === "Resource/no_img.jpg" ?
+                                                                                                <div className="chat-user-img align-self-center">
+                                                                                                    <div className="avatar-xs">
+                                                                                                        <span className="avatar-title rounded-circle bg-soft-primary text-primary">
+                                                                                                            {ms?.fullName?.charAt(0)}
+                                                                                                        </span>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                : <img
+                                                                                                    style={{
+                                                                                                        width: "15px",
+                                                                                                        height: "15px",
+                                                                                                    }}
+                                                                                                    src={`${process.env.REACT_APP_BASE_API_URL}/Auth/img?key=${ms?.avatar}`} alt="chatvia" />
+                                                                                        }
+                                                                                    </div>
+                                                                                    <UncontrolledTooltip target={`bubble-${idx}`} placement="top">
+                                                                                        {`${ms?.fullName} đã xem vào lúc ${formatDate(ms?.created)}`}
+                                                                                    </UncontrolledTooltip>
+                                                                                </li>
+                                                                            )
+                                                                        })}
+
+                                                                    </ul>
                                                                 }
                                                             </div>
                                                         </div>
@@ -322,7 +355,7 @@ function UserChat(props) {
                             </ModalBody>
                         </Modal>
 
-                        <ChatInput profile={props.profile} setIsTyping={setIsTyping} connection={props.connection} onaddMessage={addMessageState} addMessageRealtime={props.addMessage} chatLogs={props.chatLogs} active_user={props.active_user} scrolltoBottom={scrolltoBottom} />
+                        <ChatInput lastMessage={props.lastMessage} seen={props?.seen} log={props?.log} profile={props.profile} setIsTyping={setIsTyping} connection={props.connection} onaddMessage={addMessageState} addMessageRealtime={props.addMessage} chatLogs={props.chatLogs} active_user={props.active_user} scrolltoBottom={scrolltoBottom} />
                     </div>
 
                     <UserProfileSidebar activeUser={props.recentChatList[props.active_user]} />
@@ -334,10 +367,10 @@ function UserChat(props) {
 }
 
 const mapStateToProps = (state) => {
-    const { active_user, log, connection, isTyping } = state.Chat;
+    const { active_user, log, connection, isTyping, seen, lastMessage } = state.Chat;
     const { userSidebar } = state.Layout;
     const { profile } = state.Auth;
-    return { active_user, userSidebar, log, connection, isTyping, profile };
+    return { active_user, userSidebar, log, connection, isTyping, profile, seen, lastMessage };
 };
 
 export default withRouter(connect(mapStateToProps, { openUserSidebar, setFullUser, addMessage, chatLogs, setIsTyping })(UserChat));

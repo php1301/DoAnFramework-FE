@@ -1,5 +1,5 @@
 import {
-    CHAT_USER, ACTIVE_USER, FULL_USER, ADD_LOGGED_USER, CREATE_GROUP, ADD_MESSAGE, CHAT_LOGS, CHAT_HISTORY, SET_CHAT_HISTORY, SET_CHAT_LOGS, SET_CONTACTS, SET_SEARCH_CONTACTS, GET_ACTIVE_USER, SET_CONNECTION, SET_IS_TYPING
+    CHAT_USER, ACTIVE_USER, FULL_USER, ADD_LOGGED_USER, CREATE_GROUP, ADD_MESSAGE, CHAT_LOGS, CHAT_HISTORY, SET_CHAT_HISTORY, SET_CHAT_LOGS, SET_CONTACTS, SET_SEARCH_CONTACTS, SET_SEEN, SET_CONNECTION, SET_IS_TYPING, SET_ACTIVE
 } from './constants';
 
 import _ from "lodash";
@@ -321,13 +321,17 @@ const Chat = (state = INIT_STATE, action) => {
 
         case SET_CHAT_LOGS:
             const log = JSON.parse(action?.payload?.data)
+            const lastMessage = log.at(-1)
             const attachedFiles = attached(log)
-            return { ...state, log, files: attachedFiles };
-
+            return { ...state, log, files: attachedFiles, lastMessage };
+        case SET_ACTIVE:
+            return { ...state, active: action?.payload };
         case SET_CONNECTION:
             return { ...state, connection: action?.payload }
         case SET_IS_TYPING:
-            return { ...state, isTyping: action?.payload, };
+            return { ...state, isTyping: action?.payload };
+        case SET_SEEN:
+            return { ...state, seen: action?.payload };
         case SET_CONTACTS:
 
             const contact = sortContact(action?.payload)

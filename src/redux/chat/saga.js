@@ -1,4 +1,4 @@
-import { all, call, fork, put, takeEvery } from 'redux-saga/effects';
+import { all, call, fork, put, takeEvery, select } from 'redux-saga/effects';
 
 import { APIClient, setAuthorization } from '../../helpers/apiClient';
 
@@ -11,19 +11,21 @@ import {
     CONTACTS,
     SEARCH_CONTACTS,
     ADD_CONTACTS,
+    CHANGE_GROUP_AVATAR,
 } from './constants';
 
 
 import {
     activeUser,
-    apiError, setChatHistory, setChatLogs, setContact, setSearchContact,
+    apiError, getActiveLog, setChatHistory, setChatLogs, setContact, setSearchContact,
 } from './actions';
-import { AddContact, AddGroup, GetChatBoardInfo, GetChatHistory, GetContact, GetMessageByContact, GetMessageByGroup, SearchContact, SendMessage } from '../../helpers/api-constant';
+import { AddContact, AddGroup, GetChatBoardInfo, GetChatHistory, GetContact, GetMessageByContact, GetMessageByGroup, SearchContact, SendMessage, UpdateGroupAvatar } from '../../helpers/api-constant';
 
 
 
 const create = new APIClient().create;
 const get = new APIClient().get;
+const update = new APIClient().update;
 
 
 
@@ -102,17 +104,19 @@ export function* createGroup(payload) {
 }
 
 export function* getMessage(payload) {
-    const { groupCode, contactCode } = payload?.payload;
+    const { groupCode, contactCode, setActive } = payload?.payload;
     setAuthorization()
     if (groupCode) {
         const data = yield call(getMessageByGroup, groupCode);
         yield put(setChatLogs(data))
-        yield call(getChatBoardInfo, groupCode)
+        if (setActive)
+            yield call(getChatBoardInfo, groupCode)
     }
     else if (contactCode) {
         const data = yield call(getMessageByContact, contactCode);
         yield put(setChatLogs(data))
-        yield call(getChatBoardInfo, null, contactCode)
+        if (setActive)
+            yield call(getChatBoardInfo, null, contactCode)
     }
 
 }
@@ -140,6 +144,21 @@ export function* getMessageByGroup(groupCode) {
 
 }
 
+export function* changeGroupAvatar(payload) {
+    try {
+        setAuthorization()
+        const { Avatar, groupCode } = payload.payload
+        if (Avatar) {
+            yield call(update, UpdateGroupAvatar, { Avatar, Code: groupCode })
+            yield call(getChatBoardInfo, groupCode)
+            yield call(getChatHistory)
+        }
+    }
+    catch (e) {
+
+    }
+}
+
 export function* getMessageByContact(contactCode) {
     try {
         const response = yield call(get, GetMessageByContact + "/" + contactCode);
@@ -153,14 +172,8 @@ export function* getMessageByContact(contactCode) {
 
 function* addMessage(payload) {
     try {
-        const { groupCode, message } = payload?.payload;
-        const formData = new FormData();
+        const { groupCode, formData } = payload?.payload;
 
-        formData.append("data", JSON.stringify({
-            SendTo: groupCode,
-            Content: message.trim(),
-            Type: "text"
-        }));
         setAuthorization()
         const response = yield call(create, SendMessage, formData, {
             params: {
@@ -200,6 +213,9 @@ export function* watchCreateGroup() {
     yield takeEvery(CREATE_GROUP, createGroup);
 }
 
+export function* watchChangeGroupAvatar() {
+    yield takeEvery(CHANGE_GROUP_AVATAR, changeGroupAvatar);
+}
 function* chatSaga() {
     yield all([
         fork(watchAddMessage),
@@ -209,6 +225,7 @@ function* chatSaga() {
         fork(watchSearchContact),
         fork(watchAddContact),
         fork(watchCreateGroup),
+        fork(watchChangeGroupAvatar),
     ]);
 }
 

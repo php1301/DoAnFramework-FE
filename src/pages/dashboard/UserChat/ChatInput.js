@@ -3,11 +3,17 @@ import { Button, Input, Row, Col, UncontrolledTooltip, ButtonDropdown, DropdownT
 import { Picker } from 'emoji-mart'
 import 'emoji-mart/css/emoji-mart.css'
 import FileList from "./FileList"
+import ImageItem from './ImageItem';
 
 function ChatInput(props) {
     const [textMessage, settextMessage] = useState("");
+    const [imageFileTarget, setImageFileTarget] = useState({
+        file: "",
+        name: "",
+    });
     const [isOpen, setisOpen] = useState(false);
     const [file, setfile] = useState({
+        file: "",
         name: "",
         size: ""
     });
@@ -19,11 +25,23 @@ function ChatInput(props) {
     const handleChange = async e => {
         const Code = localStorage.getItem("authUser");
         settextMessage(e.target.value)
-        if (e.target.value !== "") {
-            await props.connection.invoke("IsTyping", props.active_user.Code, props.profile?.FullName, Code, props.profile?.Avatar)
+        if (!props.active_user?.IsGroup) {
+            if (props.log?.length !== 0) {
+                if (e.target.value !== "" && props?.lastMessage?.Id) {
+                    await props.connection.invoke("IsTyping", props.active_user.Code, props.profile?.FullName, Code, props.profile?.Avatar)
+                }
+                else {
+                    await removeTyping()
+                }
+            }
         }
         else {
-            await removeTyping()
+            if (e.target.value !== "") {
+                await props.connection.invoke("IsTyping", props.active_user.Code, props.profile?.FullName, Code, props.profile?.Avatar)
+            }
+            else {
+                await removeTyping()
+            }
         }
     }
 
@@ -37,6 +55,7 @@ function ChatInput(props) {
     const handleFileChange = e => {
         if (e.target.files.length !== 0)
             setfile({
+                file: e.target.files[0],
                 name: e.target.files[0].name,
                 size: e.target.files[0].size
             })
@@ -44,8 +63,13 @@ function ChatInput(props) {
 
     //function for image input change
     const handleImageChange = e => {
-        if (e.target.files.length !== 0)
+        if (e.target.files.length !== 0) {
             setfileImage(URL.createObjectURL(e.target.files[0]))
+            setImageFileTarget({
+                file: e.target.files[0],
+                name: e.target.files[0].name,
+            })
+        }
     }
     const removeTyping = async () => {
         const Code = localStorage.getItem("authUser");
@@ -64,11 +88,23 @@ function ChatInput(props) {
         };
     }, [textMessage]);
 
+    useEffect(() => {
+        document.getElementById("chatInput").focus();
+        settextMessage("")
+        removeTyping()
+    }, [props.active_user?.Code])
+
     const onaddMessage = async (e) => {
         e.preventDefault();
         //if text value is not emptry then call onaddMessage function
+        const formData = new FormData();
         if (textMessage !== "") {
-            props.addMessageRealtime(props.active_user.Code, textMessage);
+            formData.append("data", JSON.stringify({
+                SendTo: props.active_user?.Code || props.active_user?.UserCode,
+                Content: textMessage.trim(),
+                Type: "text"
+            }));
+            props.addMessageRealtime(props.active_user?.Code || props.active_user?.UserCode, formData);
             settextMessage("");
             props.scrolltoBottom()
             await removeTyping()
@@ -76,8 +112,15 @@ function ChatInput(props) {
 
         //if file input value is not empty then call onaddMessage function
         if (file.name !== "") {
-            // props.onaddMessage(file, "fileMessage");
+            formData.append("files", file?.file, file.name);
+            formData.append("data", JSON.stringify({
+                SendTo: props.active_user?.Code || props.active_user?.UserCode,
+                Content: textMessage.trim(),
+                Type: "attachment"
+            }));
+            props.addMessageRealtime(props.active_user?.Code || props.active_user?.UserCode, formData);
             setfile({
+                file: "",
                 name: "",
                 size: ""
             })
@@ -85,11 +128,27 @@ function ChatInput(props) {
 
         //if image input value is not empty then call onaddMessage function
         if (fileImage !== "") {
-            // props.onaddMessage(fileImage, "imageMessage");
+            formData.append("files", imageFileTarget?.file, imageFileTarget.name);
+            formData.append("data", JSON.stringify({
+                SendTo: props.active_user?.Code || props.active_user?.UserCode,
+                Content: textMessage.trim(),
+                Type: "media"
+            }));
+            props.addMessageRealtime(props.active_user?.Code || props.active_user?.UserCode, formData);
             setfileImage("")
+            setImageFileTarget({
+                file: "",
+                name: "",
+            })
         }
     }
-
+    const handleFocus = async () => {
+        const Code = localStorage.getItem("authUser");
+        if (props?.lastMessage?.Id) {
+            props.connection.invoke("SeenMessage", props?.lastMessage?.Id, Code, props.active_user?.Code || props.active_user?.UserCode);
+            await removeTyping()
+        }
+    }
     return (
         <React.Fragment>
             <div className="p-3 p-lg-4 border-top mb-0">
@@ -98,8 +157,8 @@ function ChatInput(props) {
                         <Col>
                             <div>
                                 {file?.name && <FileList hideControl fileName={file.name} fileSize={file.size} />}
-                                {fileImage && <img src={fileImage} width={55} height={55} style={{ marginBottom: "10px", paddingLeft: "0.5rem" }} />}
-                                <Input type="text" value={textMessage} onChange={handleChange} className="form-control form-control-lg bg-light border-light" placeholder="Enter Message..." />
+                                {fileImage && <ImageItem local image={fileImage} title={imageFileTarget?.name} />}
+                                {!fileImage && !file?.name && <Input onFocus={handleFocus} id="chatInput" autoFocus type="text" value={textMessage} onChange={handleChange} className="form-control form-control-lg bg-light border-light" placeholder="Enter Message..." />}
                             </div>
                         </Col>
                         <Col xs="auto">

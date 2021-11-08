@@ -7,7 +7,7 @@ import { DateTime } from "luxon";
 import SimpleBar from "simplebar-react";
 
 //actions
-import { setconversationNameInOpenChat, activeUser, chatLogs } from "../../../redux/actions"
+import { setconversationNameInOpenChat, activeUser, chatLogs, startPollingActiveLists } from "../../../redux/actions"
 
 //components
 import OnlineUsers from "./OnlineUsers";
@@ -56,7 +56,7 @@ class Chats extends Component {
             return DateTime.fromISO(date).toFormat("hh:mm a");;
         }
 
-        return DateTime.fromISO(date).toFormat("MM/dd hh:mm a");;
+        return DateTime.fromISO(date).toFormat("dd/MM hh:mm a");;
 
     }
     handleChange(e) {
@@ -67,7 +67,7 @@ class Chats extends Component {
 
         //find conversation name from array
         for (let i = 0; i < conversation.length; i++) {
-            if (conversation[i].name.toLowerCase().includes(search) || conversation[i].name.toUpperCase().includes(search))
+            if (conversation[i]?.Name?.toLowerCase().includes(search) || conversation[i]?.Name?.toUpperCase().includes(search))
                 filteredArray.push(conversation[i]);
         }
 
@@ -81,14 +81,18 @@ class Chats extends Component {
     openUserChat(e, chat) {
 
         e.preventDefault();
-
+        this.props.startPollingActiveLists()
         //find index of current chat in array
         // if (chat.IsGroup)
         //     this.props.chatLogs(chat.Code)
         //     else {
         //         this.props.chatLogs(null, chat.Code)
         //     }
+        const Code = localStorage.getItem("authUser");
         this.props.chatLogs(chat.Code)
+        if (chat?.LastMessage?.Id) {
+            this.props.connection.invoke("SeenMessage", chat.LastMessage.Id, Code, chat.Code);
+        }
         // set activeUser 
         let chatList = document.getElementById("chat-list");
         let clickedItem = e.target;
@@ -127,7 +131,17 @@ class Chats extends Component {
             unread.style.display = "none";
         }
     }
-
+    containUsersOnline = (chat) => {
+        let flag = 1
+        const data = this.props.active?.active?.length > 0 && this.props?.active?.active?.filter(c => c.code !== this.props?.active.userCode)
+        data?.length > 0 && data?.every(c => {
+            const exists = chat?.Users.findIndex(i => i.Code === c.code)
+            if (exists !== -1) {
+                flag = 2;
+            }
+        })
+        return flag;
+    }
     render() {
         const currentUser = localStorage.getItem("authUser")
         return (
@@ -147,7 +161,7 @@ class Chats extends Component {
                     </div>
 
                     {/* online users */}
-                    <OnlineUsers />
+                    <OnlineUsers chatLogs={this.props?.chatLogs} active={this.props?.active} />
 
                     {/* Start chat-message-list  */}
                     <div className="px-2">
@@ -179,21 +193,21 @@ class Chats extends Component {
                                                     <div className="d-flex">
                                                         {
                                                             chat.Avatar === "Resource/no_img.jpg" ?
-                                                                <div className={"chat-user-img " + chat?.status + " align-self-center me-3 ms-0"}>
+                                                                <div className={`${this.containUsersOnline(chat) === 2 ? "chat-user-img online" : "chat-user-img"} align-self-center me-3 ms-0`}>
                                                                     <div className="avatar-xs">
                                                                         <span className="avatar-title rounded-circle bg-soft-primary text-primary">
                                                                             {chat?.Type === "multi" ? chat?.Name?.charAt(1) : chat?.Name?.charAt(0)}
                                                                         </span>
                                                                     </div>
                                                                     {
-                                                                        chat.status && <span className="user-status"></span>
+                                                                        <span className="user-status"></span>
                                                                     }
                                                                 </div>
                                                                 :
-                                                                <div className={"chat-user-img " + chat.status + " align-self-center me-3 ms-0"}>
+                                                                <div className={`${this.containUsersOnline(chat) === 2 ? "chat-user-img online" : "chat-user-img"} align-self-center me-3 ms-0`}>
                                                                     <img src={`${process.env.REACT_APP_BASE_API_URL}/Auth/img?key=${chat?.Avatar}`} className="rounded-circle avatar-xs" alt="chatvia" />
                                                                     {
-                                                                        chat.status && <span className="user-status"></span>
+                                                                        <span className="user-status"></span>
                                                                     }
                                                                 </div>
                                                         }
@@ -227,11 +241,11 @@ class Chats extends Component {
                                                             </p>
                                                         </div>
                                                         <div className="font-size-11">{this.formatDate(chat?.LastActive)}</div>
-                                                        {/* {chat.unRead === 0 ? null :
-                                                        <div className="unread-message" id={"unRead" + chat.id}>
-                                                            <span className="badge badge-soft-danger rounded-pill">{chat?.LastMessage?.Content?.substring(0,30)}</span>
-                                                        </div>
-                                                    } */}
+                                                        {chat.Unread === 0 ? null :
+                                                            <div className="unread-message" id={"unRead" + chat.id}>
+                                                                <span className="badge badge-soft-danger rounded-pill">{chat?.Unread}</span>
+                                                            </div>
+                                                        }
                                                     </div>
                                                 </Link>
                                             </li>
@@ -245,14 +259,14 @@ class Chats extends Component {
                     </div>
                     {/* End chat-message-list */}
                 </div>
-            </React.Fragment>
+            </React.Fragment >
         );
     }
 }
 
 const mapStateToProps = (state) => {
-    const { active_user } = state.Chat;
-    return { active_user };
+    const { active_user, connection, active } = state.Chat;
+    return { active_user, connection, active };
 };
 
-export default connect(mapStateToProps, { setconversationNameInOpenChat, activeUser, chatLogs })(Chats);
+export default connect(mapStateToProps, { setconversationNameInOpenChat, activeUser, chatLogs, startPollingActiveLists })(Chats);

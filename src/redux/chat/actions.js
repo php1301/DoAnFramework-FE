@@ -1,18 +1,18 @@
 import {
-    CHAT_USER, ACTIVE_USER, FULL_USER, ADD_LOGGED_USER, CREATE_GROUP, ADD_MESSAGE, API_FAILED, CHAT_LOGS, CHAT_HISTORY, SET_CHAT_HISTORY, SET_CHAT_LOGS, SET_CONTACTS, ADD_CONTACTS, SET_GROUPS, GROUPS, CONTACTS, SEARCH_CONTACTS, SET_SEARCH_CONTACTS, GET_ACTIVE_USER, SET_CONNECTION, SET_IS_TYPING
+    CHAT_USER, ACTIVE_USER, FULL_USER, ADD_LOGGED_USER, CREATE_GROUP, ADD_MESSAGE, API_FAILED, CHAT_LOGS, CHAT_HISTORY, SET_CHAT_HISTORY, SET_CHAT_LOGS, SET_CONTACTS, ADD_CONTACTS, SET_GROUPS, GROUPS, CONTACTS, SEARCH_CONTACTS, SET_SEARCH_CONTACTS, SET_SEEN, SET_CONNECTION, SET_IS_TYPING, CHANGE_GROUP_AVATAR, SET_ACTIVE, START_POLLING_ACTIVE_LIST
 } from './constants';
 
-export const addMessage = (groupCode, message) => ({
+export const addMessage = (groupCode, formData) => ({
     type: ADD_MESSAGE,
     payload: {
-        groupCode, message
+        groupCode, formData
     }
 })
 
-export const chatLogs = (groupCode, contactCode) => ({
+export const chatLogs = (groupCode, contactCode, setActive = true) => ({
     type: CHAT_LOGS,
     payload: {
-        groupCode, contactCode
+        groupCode, contactCode, setActive,
     }
 })
 
@@ -72,6 +72,8 @@ export const activeUser = (userId) => ({
 });
 
 export const getActiveUser = (state) => state.Chat.active_user
+export const getActiveLog = (state) => state.Chat.log
+export const getLastMessage = (state) => state.Chat.lastMessage
 
 export const setFullUser = (fullUser) => ({
     type: FULL_USER,
@@ -90,6 +92,25 @@ export const setConnection = (connection) => ({
 
 export const setIsTyping = (payload) => ({
     type: SET_IS_TYPING,
+    payload
+})
+
+export const setSeen = (payload) => ({
+    type: SET_SEEN,
+    payload
+})
+
+export const changeGroupAvatar = (payload) => ({
+    type: CHANGE_GROUP_AVATAR,
+    payload
+})
+
+export const startPollingActiveLists = () => ({
+    type: START_POLLING_ACTIVE_LIST,
+})
+
+export const setActiveLists = (payload) => ({
+    type: SET_ACTIVE,
     payload
 })
 

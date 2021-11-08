@@ -68,7 +68,7 @@ function Profile(props) {
                             </div> :
                             <img src={`${process.env.REACT_APP_BASE_API_URL}/Auth/img?key=${props.profile?.Avatar}`} className="rounded-circle avatar-lg img-thumbnail" alt="chatvia" />}                                </div>
 
-                    <h5 className="font-size-16 mb-1 text-truncate">{t('Patricia Smith')}</h5>
+                    <h5 className="font-size-16 mb-1 text-truncate">{props?.profile?.FullName}</h5>
                     <p className="text-muted text-truncate mb-1"><i className="ri-record-circle-fill font-size-10 text-success me-1 d-inline-block"></i> {t('Active')}</p>
                 </div>
                 {/* End profile user  */}
@@ -90,8 +90,8 @@ function Profile(props) {
                                 toggleCollapse={toggleCollapse1}
                             >
                                 <div>
-                                    <p className="text-muted mb-1">{t('Name')}</p>
-                                    <h5 className="font-size-14">{props.profile?.FullName}</h5>
+                                    <p className="text-muted mb-1">{t('Username')}</p>
+                                    <h5 className="font-size-14">{props.profile?.UserName}</h5>
                                 </div>
 
                                 <div className="mt-4">
@@ -106,7 +106,7 @@ function Profile(props) {
 
                                 <div className="mt-4">
                                     <p className="text-muted mb-1">{t('Địa chỉ')}</p>
-                                    <h5 className="font-size-14 mb-0">{props.profile?.Address}</h5>
+                                    <h5 className="font-size-14 mb-0">{props.profile?.Address || "Ho Chi Minh City"}</h5>
                                 </div>
                             </CustomCollapse>
                         </Card>
