@@ -1,5 +1,5 @@
 import {
-    CHAT_USER, ACTIVE_USER, FULL_USER, ADD_LOGGED_USER, CREATE_GROUP, ADD_MESSAGE, CHAT_LOGS, CHAT_HISTORY, SET_CHAT_HISTORY, SET_CHAT_LOGS, SET_CONTACTS, SET_SEARCH_CONTACTS, SET_SEEN, SET_CONNECTION, SET_IS_TYPING, SET_ACTIVE
+    CHAT_USER, ACTIVE_USER, FULL_USER, ADD_LOGGED_USER, CREATE_GROUP, ADD_MESSAGE, SET_CHAT_HISTORY, SET_CHAT_LOGS, SET_CONTACTS, SET_SEARCH_CONTACTS, SET_SEEN, SET_CONNECTION, SET_IS_TYPING, SET_ACTIVE
 } from './constants';
 
 import _ from "lodash";
@@ -247,19 +247,15 @@ const INIT_STATE = {
 const sortContact = (contacts) => {
     let data = contacts?.reduce((r, e) => {
         try {
-            // get first letter of name of current element
             let group = e.FullName[0];
             if (!r[group]) r[group] = { group, children: [e] }
             else r[group].children.push(e);
         } catch (error) {
             return [];
         }
-        // return accumulator
         return r;
     }, {})
 
-    // since data at this point is an object, to get array of values
-    // we use Object.values method
     let result = data && Object.values(data);
     return result;
 }

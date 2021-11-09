@@ -5,7 +5,7 @@ import SimpleBar from "simplebar-react";
 import { connect } from "react-redux";
 
 import { withTranslation } from 'react-i18next';
-import { addContact, requestContactList, searchContact, chatLogs } from '../../../redux/chat/actions';
+import { addContact, requestContactList, searchContact, chatLogs, changeView } from '../../../redux/actions';
 
 //use sortedContacts variable as global variable to sort contacts
 class Contacts extends Component {
@@ -65,10 +65,14 @@ class Contacts extends Component {
     // }
     handleText = (contact) => {
         console.log(contact)
+        this.props.changeView("Chat");
         this.props.chatLogs(null, contact.Code, true)
     }
-    handleCall = (contact) => {
-
+    containUsersOnline = (code) => {
+        const { active } = this.props
+        const data = active?.active?.length > 0 && active?.active?.filter(c => c.code !== active.userCode)
+        const index = data?.length > 0 ? data?.findIndex(i => i.code === code) : -1
+        return index;
     }
     render() {
         const { t, contact } = this.props;
@@ -171,15 +175,21 @@ class Contacts extends Component {
                                                 <li key={key} >
                                                     <div className="d-flex align-items-center">
                                                         {child?.Avatar !== "Resource/no_img.jpg" ?
-                                                            <div className="me-3 ms-0">
+                                                            <div className={`${this.containUsersOnline(child?.Code) !== -1 ? "chat-user-img online" : "chat-user-img"} me-3 ms-0`}>
                                                                 <img src={`${process.env.REACT_APP_BASE_API_URL}/Auth/img?key=${child?.Avatar}`} className="rounded-circle avatar-xs" alt="chatvia" />
+                                                                {
+                                                                    <span className="user-status"></span>
+                                                                }
                                                             </div>
-                                                            : <div className="chat-user-img align-self-center me-3">
+                                                            : <div className={`${this.containUsersOnline(child?.Code) !== -1 ? "chat-user-img online" : "chat-user-img"} align-self-center me-3`}>
                                                                 <div className="avatar-xs">
                                                                     <span className="avatar-title rounded-circle bg-soft-primary text-primary">
                                                                         {child?.FullName?.charAt(0)}
                                                                     </span>
                                                                 </div>
+                                                                {
+                                                                    <span className="user-status"></span>
+                                                                }
                                                             </div>}
                                                         <div className="flex-1">
 
@@ -191,8 +201,6 @@ class Contacts extends Component {
                                                             </DropdownToggle>
                                                             <DropdownMenu className="dropdown-menu-end">
                                                                 <DropdownItem onClick={() => this.handleText(child)}>{t('Nhắn tin')} <i className="ri-message-line float-end text-muted"></i></DropdownItem>
-                                                                <DropdownItem onClick={() => this.handleCall(child)}>{t('Gọi điện')} <i className="ri-phone-line float-end text-muted"></i></DropdownItem>
-                                                                <DropdownItem>{t('Remove')} <i className="ri-delete-bin-line float-end text-muted"></i></DropdownItem>
                                                             </DropdownMenu>
                                                         </UncontrolledDropdown>
                                                     </div>
@@ -213,8 +221,8 @@ class Contacts extends Component {
 }
 
 const mapStateToProps = (state) => {
-    const { contact, searchContacts } = state.Chat;
-    return { contact, searchContacts };
+    const { contact, searchContacts, active } = state.Chat;
+    return { contact, searchContacts, active };
 };
 
-export default connect(mapStateToProps, { addContact, requestContactList, searchContact, chatLogs })(withTranslation()(Contacts));
+export default connect(mapStateToProps, { addContact, requestContactList, searchContact, chatLogs, changeView })(withTranslation()(Contacts));

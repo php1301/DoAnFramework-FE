@@ -23,7 +23,6 @@ File: Main Css File
 @import "custom/components/accordion";
 @import "custom/components/forms";
 
-
 // Plugins
 @import "custom/plugins/custom-scrollbar";
 
@@ -36,3 +35,105 @@ File: Main Css File
 @import "custom/pages/user-profile-details";
 @import "custom/pages/authentication";
 
+.modal-dialog-full .modal-content {
+	height: 100%;
+}
+
+#outgoingCallIframe,
+#inComingCallIframe {
+	// width: 100%;
+	// height: 100%;
+	margin-top: -25px;
+	overflow: hidden;
+}
+#modalOutgoingCall .modal-content {
+	height: 100%;
+}
+
+.main-box-call {
+	height: 100vh;
+}
+
+.main-box-call-header {
+	background: white;
+	display: flex;
+	height: 63px;
+	border-bottom: 1px solid #dadce0;
+	padding: 6px 20px;
+}
+
+.box-main-call {
+	width: 800px;
+	margin: 0 auto;
+	max-height: 500px;
+	overflow: auto;
+	margin-top: 30px;
+}
+
+.box-main-call::-webkit-scrollbar {
+	width: 5px;
+}
+
+.box-main-call::-webkit-scrollbar-track {
+	box-shadow: inset 0 0 5px #e2e2e2;
+	border-radius: 5px;
+}
+
+.box-main-call::-webkit-scrollbar-thumb {
+	background: #cccccc;
+	border-radius: 5px;
+}
+
+.list-call-detail {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	color: #525252;
+}
+
+.list-call-detail > div:first-child {
+	display: flex;
+	align-items: center;
+}
+
+.list-call-detail > div:first-child > i {
+	margin-right: 25px;
+	width: 36px;
+	border: 1px solid #dcdcdc;
+	text-align: center;
+	border-radius: 50%;
+	cursor: pointer;
+}
+
+.list-call-detail > div:first-child > i.mdi-phone-incoming {
+	color: #0096c3;
+	border-color: #0096c3;
+}
+
+.list-call-detail > div:first-child > i.mdi-phone-outgoing {
+	color: #ea9c0c;
+	border-color: #ea9c0c;
+}
+
+.list-call-detail > div:first-child > i.mdi-phone-missed {
+	color: #dc3545;
+	border-color: #dc3545;
+}
+
+.span-call {
+	width: 34px;
+	text-align: center;
+	border-radius: 50%;
+	cursor: pointer;
+	display: block;
+}
+
+.span-call-phone {
+	background: #0096c3;
+	color: white;
+}
+
+.span-call-video {
+	background: #62c508;
+	color: white;
+}

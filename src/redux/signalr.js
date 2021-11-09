@@ -1,12 +1,13 @@
 import config from "../config";
 import { eventChannel } from 'redux-saga';
 import { delay, select, put, call, take, spawn } from 'redux-saga/effects'
-import { chatLogs, getActiveUser, getLastMessage, requestChatHistory, setActiveLists, setConnection, setIsTyping, setSeen } from "./actions";
+import { callHistory, chatLogs, getActiveUser, getDetailsCallHistory, getLastMessage, joinVideoCall, requestChatHistory, setActiveLists, setConnection, setIncomingCallUrl, setIsTyping, setSeen, toggleCallModal, updateHubConnection } from "./actions";
 import * as signalR from "@microsoft/signalr";
 function* listenNotifications() {
+  const hubLinkUrl = localStorage.getItem("hubApi")
   const connection = new signalR.HubConnectionBuilder()
     // .withUrl(config.CHATHUB, { accessTokenFactory: () => localStorage.token })
-    .withUrl(config.CHATHUB, {
+    .withUrl(hubLinkUrl || config.CHATHUB, {
       skipNegotiation: true,
       transport: signalR.HttpTransportType.WebSockets
     })
@@ -27,10 +28,11 @@ function* listenNotifications() {
       connected = false
     }
   }
-  
+
   if (connected) {
     yield put(setConnection(connection));
-    yield call(() => connection.invoke("getConnectionId"))
+    const connectionId = yield call(() => connection.invoke("getConnectionId"))
+    yield put(updateHubConnection(connectionId))
     const Code = localStorage.getItem("authUser");
     yield call(() => connection.invoke("AddToConnected", Code))
     yield call(() => connection.invoke("NotIsTyping", "", "", Code, ""));
@@ -41,6 +43,7 @@ function* listenNotifications() {
       connection.on('IsTyping', handler)
       connection.on('MessageSeen', handler)
       connection.on('GetActiveFriends', handler)
+      connection.on('callHubListener', handler)
       return () => { connection.off() }
     })
     const getIsTyping = connection => eventChannel(emit => {
@@ -53,7 +56,6 @@ function* listenNotifications() {
     while (true) {
       const data = yield take(channel)
       // const data = yield take(channelIsTyping)
-      // console.log(data)
       if (data?.type === "messageSeens") {
         yield put(setSeen(data));
       }
@@ -82,7 +84,25 @@ function* listenNotifications() {
           if (data?.active)
             yield put(setActiveLists(data))
         }
-        yield put(requestChatHistory())
+        if (data?.type === "IncomingCall") {
+          console.log(data)
+          if (window.confirm("Có cuộc gọi đến")) {
+            yield put(joinVideoCall(data?.url))
+            yield put(setIncomingCallUrl(data?.url));
+            yield put(toggleCallModal());
+          }
+          else {
+            const state = yield select();
+            const activeCallLog = state?.Call?.activeCallLog
+            if (activeCallLog) {
+              put(getDetailsCallHistory(activeCallLog.Code))
+            }
+            yield put(callHistory())
+          }
+        }
+        else {
+          yield put(requestChatHistory())
+        }
       }
     }
   }

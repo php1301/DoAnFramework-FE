@@ -216,7 +216,7 @@ function UserProfileSidebar(props) {
                                 {/* import collaps */}
                                 <CustomCollapse
                                     title="Members"
-                                    iconClass="ri-group-line"
+                                    iconClass="ri-ohone-line"
                                     isOpen={isOpen3}
                                     toggleCollapse={toggleCollapse3}
                                 >

@@ -1,4 +1,4 @@
-import { all, call, fork, put, takeEvery, select } from 'redux-saga/effects';
+import { all, call, fork, put, takeEvery } from 'redux-saga/effects';
 
 import { APIClient, setAuthorization } from '../../helpers/apiClient';
 
@@ -17,7 +17,7 @@ import {
 
 import {
     activeUser,
-    apiError, getActiveLog, setChatHistory, setChatLogs, setContact, setSearchContact,
+    apiError, setChatHistory, setChatLogs, setContact, setSearchContact,
 } from './actions';
 import { AddContact, AddGroup, GetChatBoardInfo, GetChatHistory, GetContact, GetMessageByContact, GetMessageByGroup, SearchContact, SendMessage, UpdateGroupAvatar } from '../../helpers/api-constant';
 

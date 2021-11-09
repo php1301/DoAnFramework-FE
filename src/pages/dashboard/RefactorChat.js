@@ -5,7 +5,9 @@ import UserChat from "./UserChat/";
 import { requestChatHistory } from "../../redux/actions"
 import { connect } from "react-redux";
 import { useInterval } from "../../helpers/use-interval";
-
+import CallModal from "./UserChat/CallModal";
+import CallLog from "./UserChat/CallLog";
+import IncomingCallModal from "./UserChat/IncomingCallModal";
 
 const Index = (props) => {
     const Code = localStorage.getItem("authUser");
@@ -25,8 +27,9 @@ const Index = (props) => {
                     <div>{vl.Code}</div>
                 })} */}
             {/* user chat */}
-            {(props.active_user?.Code || props.active_user?.UserCode) && <UserChat recentChatList={props.users} />}
-
+            {props?.view === "Chat" ? ((props.active_user?.Code || props.active_user?.UserCode) && <UserChat recentChatList={props.users} />) : (<CallLog detailCallHistory={props?.detailCallHistory} />)}
+            {props?.callingUser && !props.incomingCallUrl && <CallModal />}
+            {!props?.callingUser && props.incomingCallUrl && <IncomingCallModal />}
         </React.Fragment>
     );
 }
@@ -34,7 +37,9 @@ const Index = (props) => {
 const mapStateToProps = (state) => {
 
     const { users, data, active_user, connection } = state.Chat;
-    return { users, data, active_user, connection };
+    const { callingUser, incomingCallUrl, detailCallHistory } = state?.Call;
+    const { view } = state?.Layout;
+    return { users, data, active_user, connection, callingUser, incomingCallUrl, detailCallHistory, view };
 };
 
 export default connect(mapStateToProps, { requestChatHistory })(Index);

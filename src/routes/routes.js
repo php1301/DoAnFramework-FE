@@ -4,6 +4,7 @@ import { Redirect } from "react-router-dom";
 // lazy load all the views
 const Dashboard = React.lazy(() => import("../pages/dashboard/RefactorChat"));
 const StarterPage = React.lazy(() => import("../pages/StarterPage/index"));
+const ChangeApi = React.lazy(() => import("../pages/set-api"));
 
 // auth
 const Login = React.lazy(() => import("../pages/Auth/Login"));
@@ -29,7 +30,8 @@ const publicRoutes = [
   { path: "/login", component: Login },
   { path: "/forget-password", component: ForgetPassword },
   { path: "/register", component: Register },
-  { path: "/lock-screen", component: LockScreen }
+  { path: "/lock-screen", component: LockScreen },
+  { path: "/change-api", component: ChangeApi }
 ];
 
 const routes = [...authProtectedRoutes, ...publicRoutes];

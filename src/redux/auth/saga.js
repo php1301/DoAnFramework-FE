@@ -10,7 +10,8 @@ import {
     REGISTER_USER,
     FORGET_PASSWORD,
     GET_PROFILE,
-    UPDATE_PROFILE
+    UPDATE_PROFILE,
+    UPDATE_HUB_CONNECTION
 } from './constants';
 
 
@@ -22,7 +23,7 @@ import {
     setUserProfile
 } from './actions';
 
-import { GetProfile, UpdateProfile } from '../../helpers/api-constant';
+import { GetProfile, PostHubConnection, UpdateProfile } from '../../helpers/api-constant';
 
 //Initilize firebase
 const fireBaseBackend = getFirebaseBackend();
@@ -139,6 +140,22 @@ function* getProfile() {
     }
 }
 
+function* updateHubConnection(payload) {
+    try {
+        console.log(payload)
+        const { key } = payload?.payload
+        setAuthorization()
+        yield call(create, PostHubConnection, {}, {
+            params: {
+                key
+            }
+        })
+    }
+    catch (e) {
+        yield put(apiError(e));
+    }
+}
+
 function* updateProfile(payload) {
     try {
         setAuthorization()
@@ -174,6 +191,9 @@ export function* watchUpdateProfile() {
     yield takeEvery(UPDATE_PROFILE, updateProfile)
 }
 
+export function* watchUpdateHubConnection() {
+    yield takeEvery(UPDATE_HUB_CONNECTION, updateHubConnection)
+}
 function* authSaga() {
     yield all([
         fork(watchLoginUser),
@@ -182,6 +202,7 @@ function* authSaga() {
         fork(watchForgetPassword),
         fork(watchGetProfile),
         fork(watchUpdateProfile),
+        fork(watchUpdateHubConnection),
     ]);
 }
 

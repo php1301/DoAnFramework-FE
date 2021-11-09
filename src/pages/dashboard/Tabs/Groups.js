@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter, UncontrolledTooltip, Form, Label, Input, Collapse, CardHeader, CardBody, Alert, InputGroup, Card, Badge } from 'reactstrap';
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter, UncontrolledTooltip, Form, Label, Input, Collapse, CardHeader, CardBody, Alert, InputGroup, Card, Badge, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
+import { DateTime } from "luxon";
+import { toggleCallModal } from "../../../redux/actions";
 
 import { withTranslation } from 'react-i18next';
 
@@ -12,7 +14,7 @@ import SimpleBar from "simplebar-react";
 import SelectContact from "../../../components/SelectContact";
 
 //actions
-import { createGroup } from "../../../redux/actions";
+import { createGroup, callHistory, callUser, getDetailsCallHistory, changeView, setActiveCallLog } from "../../../redux/actions";
 
 class Groups extends Component {
     constructor(props) {
@@ -20,12 +22,12 @@ class Groups extends Component {
         this.state = {
             modal: false,
             isOpenCollapse: false,
-            groups: this.props.groups,
+            groups: this.props.callHistoryList || [],
             selectedContact: [],
             isOpenAlert: false,
             message: "",
             groupName: "",
-            groupDesc: ""
+            groupDesc: "",
         }
         this.toggle = this.toggle.bind(this);
         this.toggleCollapse = this.toggleCollapse.bind(this);
@@ -34,11 +36,23 @@ class Groups extends Component {
         this.handleChangeGroupName = this.handleChangeGroupName.bind(this);
         this.handleChangeGroupDesc = this.handleChangeGroupDesc.bind(this);
     }
+    formatDate = (date) => {
+        const currentDate = new Date();
+        const dateCompare = DateTime.fromISO(date).toJSDate();
 
+        if (currentDate.getDay() === dateCompare.getDay() &&
+            currentDate.getMonth() === dateCompare.getMonth() &&
+            currentDate.getFullYear() === dateCompare.getFullYear()
+        ) {
+            return DateTime.fromISO(date).toFormat("hh:mm a");;
+        }
+
+        return DateTime.fromISO(date).toFormat("dd/MM hh:mm a");;
+
+    }
     toggle() {
         this.setState({ modal: !this.state.modal });
     }
-
     toggleCollapse() {
         this.setState({ isOpenCollapse: !this.state.isOpenCollapse });
     }
@@ -46,9 +60,12 @@ class Groups extends Component {
     componentDidUpdate(prevProps) {
         if (prevProps !== this.props) {
             this.setState({
-                groups: this.props.groups
+                groups: this.props?.callHistoryList
             });
         }
+    }
+    componentDidMount() {
+        this.props.callHistory()
     }
 
     createGroup() {
@@ -103,6 +120,33 @@ class Groups extends Component {
         this.setState({ groupDesc: e.target.value });
     }
 
+    handleClickGroup = (group) => {
+        this.props.getDetailsCallHistory(group.Code)
+        this.props.setActiveCallLog(group);
+        this.props.changeView("Call");
+    }
+    containUsersOnline = (chat) => {
+        let flag = 1
+        const data = this.props.active?.active?.length > 0 && this.props?.active?.active?.filter(c => c.code !== this.props?.active.userCode)
+        data?.length > 0 && data?.every(c => {
+            const exists = chat?.Calls.findIndex(i => i.UserCode === c.code)
+            if (exists !== -1) {
+                flag = 2;
+            }
+        })
+        return flag;
+    }
+    handleCall = (contact) => {
+        const currentUser = localStorage.getItem("authUser");
+        const index = contact?.Calls.findIndex(i => i.UserCode !== currentUser)
+        if (index !== -1) {
+            this.props.callUser(contact?.Calls?.[index]?.UserCode);
+            this.props.setActiveCallLog(contact);
+            this.props.getDetailsCallHistory(contact.Code);
+            this.props.changeView("Call");
+            this.props.toggleCallModal();
+        }
+    }
     render() {
         const { t } = this.props;
         return (
@@ -118,10 +162,10 @@ class Groups extends Component {
                             </div>
                             <UncontrolledTooltip target="create-group" placement="bottom">
                                 Create group
-                                    </UncontrolledTooltip>
+                            </UncontrolledTooltip>
 
                         </div>
-                        <h4 className="mb-4">{t('Groups')}</h4>
+                        <h4 className="mb-4">{t('Nhóm và cuộc gọi')}</h4>
 
                         {/* Start add group Modal */}
                         <Modal isOpen={this.state.modal} centered toggle={this.toggle}>
@@ -171,38 +215,50 @@ class Groups extends Component {
                             </ModalFooter>
                         </Modal>
                         {/* End add group Modal */}
-
-                        <div className="search-box chat-search-box">
+                        {/* <div className="search-box chat-search-box">
                             <InputGroup size="lg" className="bg-light rounded-lg">
                                 <Button color="link" className="text-decoration-none text-muted pr-1" type="button">
                                     <i className="ri-search-line search-icon font-size-18"></i>
                                 </Button>
                                 <Input type="text" className="form-control bg-light" placeholder="Search groups..." />
                             </InputGroup>
-                        </div>
+                        </div> */}
                         {/* end search-box */}
                     </div>
-
                     {/* Start chat-group-list */}
                     <SimpleBar style={{ maxHeight: "100%" }} className="p-4 chat-message-list chat-group-list">
 
 
                         <ul className="list-unstyled chat-list">
                             {
-                                this.state.groups.map((group, key) =>
-                                    <li key={key} >
+                                this.state.groups?.length > 0 && this.state.groups?.map((group, key) =>
+                                    <li onClick={() => { this.handleClickGroup(group) }} key={key} >
                                         <Link to="#">
                                             <div className="d-flex align-items-center">
-                                                <div className="chat-user-img me-3 ms-0">
-                                                    <div className="avatar-xs">
-                                                        <span className="avatar-title rounded-circle bg-soft-primary text-primary">
-                                                            {group.name.charAt(1)}
-                                                        </span>
-                                                    </div>
-                                                </div>
+                                                {
+                                                    group.Avatar === "Resource/no_img.jpg" ?
+                                                        <div className={`${this.containUsersOnline(group) === 2 ? "chat-user-img online" : "chat-user-img"} align-self-center me-3 ms-0`}>
+                                                            <div className="avatar-xs">
+                                                                <span className="avatar-title rounded-circle bg-soft-primary text-primary">
+                                                                    {group?.Name?.charAt(0)}
+                                                                </span>
+                                                            </div>
+                                                            {
+                                                                <span className="user-status"></span>
+                                                            }
+                                                        </div>
+                                                        :
+                                                        <div className={`${this.containUsersOnline(group) === 2 ? "chat-user-img online" : "chat-user-img"} align-self-center me-3 ms-0`}>
+                                                            <img src={`${process.env.REACT_APP_BASE_API_URL}/Auth/img?key=${group?.Avatar}`} className="rounded-circle avatar-xs" alt="chatvia" />
+                                                            {
+                                                                <span className="user-status"></span>
+                                                            }
+                                                        </div>
+                                                }
+
                                                 <div className="flex-1 overflow-hidden">
                                                     <h5 className="text-truncate font-size-14 mb-0">
-                                                        {group.name}
+                                                        {group.Name}
                                                         {
                                                             group.unRead !== 0
                                                                 ? <Badge color="none" pill className="badge-soft-danger float-end">
@@ -218,7 +274,23 @@ class Groups extends Component {
                                                         }
 
                                                     </h5>
+                                                    <p className="chat-user-message text-truncate mb-0">
+                                                        {
+                                                            this.formatDate(group?.LastCall?.Created)
+                                                        }
+
+
+
+                                                    </p>
                                                 </div>
+                                                <UncontrolledDropdown>
+                                                    <DropdownToggle tag="a" className="text-muted">
+                                                        <i className="ri-more-2-fill"></i>
+                                                    </DropdownToggle>
+                                                    <DropdownMenu className="dropdown-menu-end">
+                                                        <DropdownItem onClick={() => this.handleCall(group)}>{t('Gọi điện')} <i className="ri-phone-line float-end text-muted"></i></DropdownItem>
+                                                    </DropdownMenu>
+                                                </UncontrolledDropdown>
                                             </div>
                                         </Link>
                                     </li>
@@ -228,14 +300,15 @@ class Groups extends Component {
                     </SimpleBar>
                     {/* End chat-group-list */}
                 </div>
-            </React.Fragment>
+            </React.Fragment >
         );
     }
 }
 
 const mapStateToProps = (state) => {
-    const { groups, active_user } = state.Chat;
-    return { groups, active_user };
+    const { groups, active_user, active } = state.Chat;
+    const { callHistoryList } = state.Call;
+    return { groups, active_user, callHistoryList, active };
 };
 
-export default (connect(mapStateToProps, { createGroup })(withTranslation()(Groups)));
+export default (connect(mapStateToProps, { createGroup, callHistory, toggleCallModal, callUser, getDetailsCallHistory, changeView, setActiveCallLog })(withTranslation()(Groups)));
