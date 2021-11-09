@@ -7,7 +7,7 @@ import { DateTime } from "luxon";
 import SimpleBar from "simplebar-react";
 
 //actions
-import { setconversationNameInOpenChat, activeUser, chatLogs, startPollingActiveLists } from "../../../redux/actions"
+import { setconversationNameInOpenChat, activeUser, chatLogs, startPollingActiveLists, changeView } from "../../../redux/actions"
 
 //components
 import OnlineUsers from "./OnlineUsers";
@@ -81,7 +81,7 @@ class Chats extends Component {
     openUserChat(e, chat) {
 
         e.preventDefault();
-        this.props.startPollingActiveLists()
+        this.props?.changeView("Chat")
         //find index of current chat in array
         // if (chat.IsGroup)
         //     this.props.chatLogs(chat.Code)
@@ -226,18 +226,15 @@ class Chats extends Component {
                                                                         </>
                                                                         :
                                                                         <>
-                                                                            {/* {
-                                                                            chat.messages && (chat?.LastMessage?.Content > 0 && chat.messages[(chat.messages).length - 1].isImageMessage === true) ? <i className="ri-image-fill align-middle me-1"></i> : null
-                                                                        }
-                                                                        {
-                                                                            chat.messages && (chat?.LastMessage?.Content > 0 && chat.messages[(chat.messages).length - 1].isFileMessage === true) ? <i className="ri-file-text-fill align-middle me-1"></i> : null
-                                                                        } */}
+                                                                            {
+                                                                                (chat?.LastMessage?.Type === "media") ? <i className="ri-image-fill align-middle me-1"></i> : null
+                                                                            }
+                                                                            {
+                                                                                (chat?.LastMessage?.Type === "attachment") ? <i className="ri-file-text-fill align-middle me-1"></i> : null
+                                                                            }
                                                                             {chat?.LastMessage?.Content.length > 30 ? chat?.LastMessage?.Content?.substring(0, 30) + "..." : chat?.LastMessage?.Content}
                                                                         </>
                                                                 }
-
-
-
                                                             </p>
                                                         </div>
                                                         <div className="font-size-11">{this.formatDate(chat?.LastActive)}</div>
@@ -269,4 +266,4 @@ const mapStateToProps = (state) => {
     return { active_user, connection, active };
 };
 
-export default connect(mapStateToProps, { setconversationNameInOpenChat, activeUser, chatLogs, startPollingActiveLists })(Chats);
+export default connect(mapStateToProps, { setconversationNameInOpenChat, activeUser, chatLogs, startPollingActiveLists, changeView })(Chats);

@@ -4,7 +4,8 @@ import Cookie from "js-cookie"
 
 
 // default
-axios.defaults.baseURL = config.API_URL;
+const apiLinkUrl = localStorage.getItem("baseApi")
+axios.defaults.baseURL = apiLinkUrl || config.API_URL;
 
 // content type
 axios.defaults.headers.post['Content-Type'] = 'application/json';

@@ -95,11 +95,11 @@ function LeftSidebarMenu(props) {
                         </UncontrolledTooltip>
                         <NavItem id="Groups">
                             <NavLink id="pills-groups-tab" className={classnames({ active: activeTab === 'group' })} onClick={() => { toggleTab('group'); }}>
-                                <i className="ri-group-line"></i>
+                                <i className="ri-phone-line"></i>
                             </NavLink>
                         </NavItem>
                         <UncontrolledTooltip target="Groups" placement="top">
-                            Groups
+                            Nhóm và cuộc gọi
                         </UncontrolledTooltip>
                         <NavItem id="Contacts">
                             <NavLink id="pills-contacts-tab" className={classnames({ active: activeTab === 'contacts' })} onClick={() => { toggleTab('contacts'); }}>
@@ -120,7 +120,7 @@ function LeftSidebarMenu(props) {
                         <Dropdown nav isOpen={dropdownOpenMobile} toggle={toggleMobile} className="profile-user-dropdown d-inline-block d-lg-none">
                             <DropdownToggle nav>
                                 {props.profile?.Avatar === "Resource/no_img.jpg" ?
-                                    <div className="avatar-lg">
+                                    <div className="avatar-xs">
                                         <span className="avatar-title rounded-circle bg-soft-primary text-primary font-size-24">
                                             {props.profile?.FullName?.charAt(0)}
                                         </span>
@@ -165,14 +165,6 @@ function LeftSidebarMenu(props) {
                                 </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
-                        <li className="nav-item">
-                            <NavLink id="light-dark" target="_blank" href="//chatvia-dark.react.themesbrand.com/">
-                                <i className="ri-sun-line theme-mode-icon"></i>
-                            </NavLink>
-                            <UncontrolledTooltip target="light-dark" placement="right">
-                                Dark / Light Mode
-                            </UncontrolledTooltip>
-                        </li>
                         <Dropdown nav isOpen={dropdownOpen} className="nav-item btn-group dropup profile-user-dropdown" toggle={toggle}>
                             <DropdownToggle className="nav-link" tag="a">
                                 {props.profile?.Avatar === "Resource/no_img.jpg" ?

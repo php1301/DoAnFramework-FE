@@ -293,7 +293,7 @@ function UserChat(props) {
                                 }
                                 {
                                     <>
-                                        {props.isTyping?.map((dt, keyDt) =>
+                                        {props.isTyping?.length > 0 && props.isTyping?.map((dt, keyDt) =>
                                             dt.groupCode === props.active_user.Code && dt.code !== currentUser && (
 
                                                 <li key={keyDt + "aa"} >

@@ -61,8 +61,8 @@ function Profile(props) {
                 <div className="text-center p-4 border-bottom">
                     <div className="mb-4">
                         {props.profile?.Avatar === "Resource/no_img.jpg" ?
-                            <div className="avatar-lg">
-                                <span className="avatar-title rounded-circle bg-soft-primary text-primary font-size-24">
+                            <div className="avatar-lg" style={{ margin: "auto" }}>
+                                <span className="avatar-title rounded-circle bg-soft-primary text-primary font-size-24" >
                                     {props.profile?.FullName?.charAt(0)}
                                 </span>
                             </div> :

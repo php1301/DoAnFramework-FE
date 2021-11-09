@@ -1,22 +1,16 @@
 import React, { useState } from 'react';
-import { Dropdown, DropdownMenu, DropdownItem, DropdownToggle, Button, Input, Row, Col, Modal, ModalBody } from "reactstrap";
+import { Dropdown, DropdownMenu, DropdownItem, DropdownToggle, Button, Row, Col, Modal, ModalBody } from "reactstrap";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 
-import { openUserSidebar, setFullUser } from "../../../redux/actions";
+import { openUserSidebar, setFullUser, callUser, toggleCallModal } from "../../../redux/actions";
 
-//import images
-import user from '../../../assets/images/users/avatar-4.jpg'
 
 function UserHead(props) {
-    const [dropdownOpen, setDropdownOpen] = useState(false);
     const [dropdownOpen1, setDropdownOpen1] = useState(false);
-    const [Callmodal, setCallModal] = useState(false);
     const [Videomodal, setVideoModal] = useState(false);
 
-    const toggle = () => setDropdownOpen(!dropdownOpen);
     const toggle1 = () => setDropdownOpen1(!dropdownOpen1);
-    const toggleCallModal = () => setCallModal(!Callmodal);
     const toggleVideoModal = () => setVideoModal(!Videomodal);
 
     const openUserSidebar = (e) => {
@@ -26,7 +20,7 @@ function UserHead(props) {
 
     function closeUserChat(e) {
         e.preventDefault();
-        var userChat = document.getElementsByClassName("user-chat");
+        let userChat = document.getElementsByClassName("user-chat");
         if (userChat) {
             userChat[0].classList.remove("user-chat-show");
         }
@@ -41,7 +35,7 @@ function UserHead(props) {
     }
     const containUsersOnline = (code) => {
         const data = props?.active?.active?.length > 0 && props?.active?.active?.filter(c => c.code !== props?.active.userCode)
-        const index = data?.length > 0 && data?.findIndex(i => i.code === code)
+        const index = data?.length > 0 ? data?.findIndex(i => i.code === code) : -1
         return index
     }
     const containUsersOnlineGroup = () => {
@@ -55,7 +49,11 @@ function UserHead(props) {
         })
         return flag;
     }
-
+    const handleCall = () => {
+        toggleVideoModal()
+        props?.callUser(props?.active_user?.UserCode);
+        props?.toggleCallModal();
+    }
     return (
         <React.Fragment>
             <div className="p-3 p-lg-4 border-bottom">
@@ -101,29 +99,12 @@ function UserHead(props) {
                     </Col>
                     <Col sm={8} xs={4} >
                         <ul className="list-inline user-chat-nav text-end mb-0">
-
-                            <li className="list-inline-item">
-                                <Dropdown isOpen={dropdownOpen} toggle={toggle}>
-                                    <DropdownToggle color="none" className="btn nav-btn " type="button">
-                                        <i className="ri-search-line"></i>
-                                    </DropdownToggle>
-                                    <DropdownMenu className="p-0 dropdown-menu-end dropdown-menu-md">
-                                        <div className="search-box p-2">
-                                            <Input type="text" className="form-control bg-light border-0" placeholder="Search.." />
-                                        </div>
-                                    </DropdownMenu>
-                                </Dropdown>
-                            </li>
-                            <li className="list-inline-item d-none d-lg-inline-block me-2 ms-0">
-                                <button type="button" onClick={toggleCallModal} className="btn nav-btn" >
-                                    <i className="ri-phone-line"></i>
-                                </button>
-                            </li>
-                            <li className="list-inline-item d-none d-lg-inline-block me-2 ms-0">
+                            {!props?.active_user.IsGroup && <li className="list-inline-item d-none d-lg-inline-block me-2 ms-0">
                                 <button type="button" onClick={toggleVideoModal} className="btn nav-btn">
                                     <i className="ri-vidicon-line"></i>
                                 </button>
                             </li>
+                            }
 
                             <li className="list-inline-item d-none d-lg-inline-block">
                                 <Button type="button" color="none" onClick={(e) => openUserSidebar(e)} className="nav-btn user-profile-show">
@@ -150,49 +131,24 @@ function UserHead(props) {
                 </Row>
             </div>
 
-            {/* Start Audiocall Modal */}
-            <Modal tabIndex="-1" isOpen={Callmodal} toggle={toggleCallModal} centered>
-                <ModalBody>
-                    <div className="text-center p-4">
-                        <div className="avatar-lg mx-auto mb-4">
-                            <img src={user} alt="" className="img-thumbnail rounded-circle" />
-                        </div>
-
-                        <h5 className="text-truncate">Doris Brown</h5>
-                        <p className="text-muted">Start Audio Call</p>
-
-                        <div className="mt-5">
-                            <ul className="list-inline mb-1">
-                                <li className="list-inline-item px-2 me-2 ms-0">
-                                    <button type="button" className="btn btn-danger avatar-sm rounded-circle" onClick={toggleCallModal}>
-                                        <span className="avatar-title bg-transparent font-size-20">
-                                            <i className="ri-close-fill"></i>
-                                        </span>
-                                    </button>
-                                </li>
-                                <li className="list-inline-item px-2">
-                                    <button type="button" className="btn btn-success avatar-sm rounded-circle">
-                                        <span className="avatar-title bg-transparent font-size-20">
-                                            <i className="ri-phone-fill"></i>
-                                        </span>
-                                    </button>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </ModalBody>
-            </Modal>
-
             {/* Start VideoCall Modal */}
             <Modal tabIndex="-1" isOpen={Videomodal} toggle={toggleVideoModal} centered>
                 <ModalBody>
                     <div className="text-center p-4">
-                        <div className="avatar-lg mx-auto mb-4">
-                            <img src={user} alt="" className="img-thumbnail rounded-circle" />
-                        </div>
-
-                        <h5 className="text-truncate">Doris Brown</h5>
-                        <p className="text-muted">Start Video Call</p>
+                        {props.active_user?.Avatar !== "Resource/no_img.jpg" ?
+                            <div className="avatar-lg mx-auto mb-4">
+                                <img src={`${process.env.REACT_APP_BASE_API_URL}/Auth/img?key=${props.active_user?.Avatar}`} className="rounded-circle avatar-lg" alt="chatvia" />
+                            </div>
+                            : <div className="chat-user-img align-self-center me-3">
+                                <div className="avatar-lg mx-auto mb-4">
+                                    <span className="avatar-title rounded-circle bg-soft-primary text-primary">
+                                        {props.active_user?.IsGroup ? props.active_user?.Name?.charAt(1) : props.active_user?.FullName?.charAt(0)}
+                                    </span>
+                                </div>
+                            </div>
+                        }
+                        <h5 className="text-truncate">{props.active_user?.FullName}</h5>
+                        <p className="text-muted">Bắt đầu cuộc gọi Video</p>
 
                         <div className="mt-5">
                             <ul className="list-inline mb-1">
@@ -204,7 +160,7 @@ function UserHead(props) {
                                     </button>
                                 </li>
                                 <li className="list-inline-item px-2">
-                                    <button type="button" className="btn btn-success avatar-sm rounded-circle">
+                                    <button type="button" className="btn btn-success avatar-sm rounded-circle" onClick={handleCall}>
                                         <span className="avatar-title bg-transparent font-size-20">
                                             <i className="ri-vidicon-fill"></i>
                                         </span>
@@ -225,4 +181,4 @@ const mapStateToProps = (state) => {
     return { ...state.Layout, users, active_user, active };
 };
 
-export default connect(mapStateToProps, { openUserSidebar, setFullUser })(UserHead);
+export default connect(mapStateToProps, { openUserSidebar, setFullUser, callUser, toggleCallModal })(UserHead);

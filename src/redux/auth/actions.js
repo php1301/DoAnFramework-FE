@@ -9,7 +9,8 @@ import {
     API_FAILED,
     SET_PROFILE,
     UPDATE_PROFILE,
-    GET_PROFILE
+    GET_PROFILE,
+    UPDATE_HUB_CONNECTION
 } from './constants';
 
 
@@ -48,6 +49,13 @@ export const forgetPasswordSuccess = (passwordResetStatus) => ({
     payload: passwordResetStatus
 });
 
+
+export const updateHubConnection = (key) => ({
+    type: UPDATE_HUB_CONNECTION,
+    payload: {
+        key
+    }
+})
 
 export const requestUserProfile = () => ({
     type: GET_PROFILE,
