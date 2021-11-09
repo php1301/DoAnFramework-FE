@@ -34,14 +34,14 @@ function ImageItem(props) {
                 {
                     <li className="list-inline-item message-img-list">
                         <div>
-                            <Link to="#" onClick={() => toggleLightbox(`${process.env.REACT_APP_BASE_API_URL}/Auth/img?key=${image}`)} className="popup-img d-inline-block m-1" title={props.title}>
-                                {props.local ? <img src={image} alt="chat" className="rounded border" width={50} height={50} /> : <img src={`${process.env.REACT_APP_BASE_API_URL}/Auth/img?key=${image}`} alt="chat" className="rounded border" />}
+                            <Link to="#" onClick={() => toggleLightbox(`${process.env.REACT_APP_BASE_API_URL || localStorage.getItem("baseApi")}/Auth/img?key=${image}`)} className="popup-img d-inline-block m-1" title={props.title}>
+                                {props.local ? <img src={image} alt="chat" className="rounded border" width={50} height={50} /> : <img src={`${process.env.REACT_APP_BASE_API_URL || localStorage.getItem("baseApi")}/Auth/img?key=${image}`} alt="chat" className="rounded border" />}
                             </Link>
                         </div>
                         {!props.local && <div className="message-img-link">
                             <ul className="list-inline mb-0">
                                 <li onClick={() => {
-                                    handleDownload(`${process.env.REACT_APP_BASE_API_URL}/Auth/img?key=${image}`)
+                                    handleDownload(`${process.env.REACT_APP_BASE_API_URL || localStorage.getItem("baseApi")}/Auth/img?key=${image}`)
                                 }} className="list-inline-item">
                                     <Link to="#">
                                         <i className="ri-download-2-line"></i>

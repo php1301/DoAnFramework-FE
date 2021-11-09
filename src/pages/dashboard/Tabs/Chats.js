@@ -205,7 +205,7 @@ class Chats extends Component {
                                                                 </div>
                                                                 :
                                                                 <div className={`${this.containUsersOnline(chat) === 2 ? "chat-user-img online" : "chat-user-img"} align-self-center me-3 ms-0`}>
-                                                                    <img src={`${process.env.REACT_APP_BASE_API_URL}/Auth/img?key=${chat?.Avatar}`} className="rounded-circle avatar-xs" alt="chatvia" />
+                                                                    <img src={`${process.env.REACT_APP_BASE_API_URL || localStorage.getItem("baseApi")}/Auth/img?key=${chat?.Avatar}`} className="rounded-circle avatar-xs" alt="chatvia" />
                                                                     {
                                                                         <span className="user-status"></span>
                                                                     }

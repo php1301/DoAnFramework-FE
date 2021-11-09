@@ -100,8 +100,8 @@ function Settings(props) {
                                             {props.profile?.FullName?.charAt(0)}
                                         </span>
                                     </div> :
-                                    <img src={fileImage || `${process.env.REACT_APP_BASE_API_URL}/Auth/img?key=${props.profile?.Avatar}`} className="rounded-circle avatar-lg img-thumbnail" alt="chatvia" />
-                                : <img src={fileImage || `${process.env.REACT_APP_BASE_API_URL}/Auth/img?key=${props.profile?.Avatar}`} className="rounded-circle avatar-lg img-thumbnail" alt="chatvia" />
+                                    <img src={fileImage || `${process.env.REACT_APP_BASE_API_URL || localStorage.getItem("baseApi")}/Auth/img?key=${props.profile?.Avatar}`} className="rounded-circle avatar-lg img-thumbnail" alt="chatvia" />
+                                : <img src={fileImage || `${process.env.REACT_APP_BASE_API_URL || localStorage.getItem("baseApi")}/Auth/img?key=${props.profile?.Avatar}`} className="rounded-circle avatar-lg img-thumbnail" alt="chatvia" />
                         }
                         {isEditMode && <Button type="button" color="light" className="avatar-xs p-0 rounded-circle profile-photo-edit">
                             <Label>
