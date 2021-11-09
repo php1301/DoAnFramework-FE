@@ -114,7 +114,7 @@ class Contacts extends Component {
                                                         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
                                                             {s?.Avatar !== "Resource/no_img.jpg" ?
                                                                 <div className="me-3 ms-0">
-                                                                    <img src={`${process.env.REACT_APP_BASE_API_URL}/Auth/img?key=${s?.Avatar}`} className="rounded-circle avatar-xs" alt="chatvia" />
+                                                                    <img src={`${process.env.REACT_APP_BASE_API_URL || localStorage.getItem("baseApi")}/Auth/img?key=${s?.Avatar}`} className="rounded-circle avatar-xs" alt="chatvia" />
                                                                 </div>
                                                                 : <div className="chat-user-img align-self-center me-3">
                                                                     <div className="avatar-xs">
@@ -176,7 +176,7 @@ class Contacts extends Component {
                                                     <div className="d-flex align-items-center">
                                                         {child?.Avatar !== "Resource/no_img.jpg" ?
                                                             <div className={`${this.containUsersOnline(child?.Code) !== -1 ? "chat-user-img online" : "chat-user-img"} me-3 ms-0`}>
-                                                                <img src={`${process.env.REACT_APP_BASE_API_URL}/Auth/img?key=${child?.Avatar}`} className="rounded-circle avatar-xs" alt="chatvia" />
+                                                                <img src={`${process.env.REACT_APP_BASE_API_URL || localStorage.getItem("baseApi")}/Auth/img?key=${child?.Avatar}`} className="rounded-circle avatar-xs" alt="chatvia" />
                                                                 {
                                                                     <span className="user-status"></span>
                                                                 }

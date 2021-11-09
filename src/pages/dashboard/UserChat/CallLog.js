@@ -48,7 +48,7 @@ function CallLog({ detailCallHistory, active, callUser, toggleCallModal }) {
                         </div>
                         :
                         <div className={`${containUsersOnline(activeCallUser?.Code) !== -1 ? "chat-user-img online" : "chat-user-img"} align-self-center ms-0`}>
-                            <img src={`${process.env.REACT_APP_BASE_API_URL}/Auth/img?key=${activeCallUser?.Avatar}`} className="rounded-circle avatar-xs" alt="chatvia" />
+                            <img src={`${process.env.REACT_APP_BASE_API_URL || localStorage.getItem("baseApi")}/Auth/img?key=${activeCallUser?.Avatar}`} className="rounded-circle avatar-xs" alt="chatvia" />
                             {
                                 <span className="user-status"></span>
                             }

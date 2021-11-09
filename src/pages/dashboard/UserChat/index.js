@@ -201,7 +201,7 @@ function UserChat(props) {
                                                                                 </span>
                                                                             </div>
                                                                         </div>
-                                                                        : <img src={`${process.env.REACT_APP_BASE_API_URL}/Auth/img?key=${dt?.UserCreatedBy?.Avatar}`} alt="chatvia" />
+                                                                        : <img src={`${process.env.REACT_APP_BASE_API_URL || localStorage.getItem("baseApi")}/Auth/img?key=${dt?.UserCreatedBy?.Avatar}`} alt="chatvia" />
                                                                 }
                                                                 <span className="user-status"></span>
                                                             </div>
@@ -223,7 +223,7 @@ function UserChat(props) {
                                                                         {
                                                                             dt.Type === "attachment" &&
                                                                             //file input component
-                                                                            <FileList path={`${process.env.REACT_APP_BASE_API_URL}/Auth/file?key=${dt?.Path}`} fileName={dt.Content} fileSize={chat.size} />
+                                                                            <FileList path={`${process.env.REACT_APP_BASE_API_URL || localStorage.getItem("baseApi")}/Auth/file?key=${dt?.Path}`} fileName={dt.Content} fileSize={chat.size} />
                                                                         }
                                                                         {/* {
                                                                         !chat.isTyping && <p className="chat-time mb-0"><i className="ri-time-line align-middle"></i> <span className="align-middle">{chat.time}</span></p>
@@ -271,7 +271,7 @@ function UserChat(props) {
                                                                                                         width: "15px",
                                                                                                         height: "15px",
                                                                                                     }}
-                                                                                                    src={`${process.env.REACT_APP_BASE_API_URL}/Auth/img?key=${ms?.avatar}`} alt="chatvia" />
+                                                                                                    src={`${process.env.REACT_APP_BASE_API_URL || localStorage.getItem("baseApi")}/Auth/img?key=${ms?.avatar}`} alt="chatvia" />
                                                                                         }
                                                                                     </div>
                                                                                     <UncontrolledTooltip target={`bubble-${idx}`} placement="top">
@@ -309,7 +309,7 @@ function UserChat(props) {
                                                                             </span>
                                                                         </div>
                                                                     </div>
-                                                                    : <img src={`${process.env.REACT_APP_BASE_API_URL}/Auth/img?key=${dt?.avatar}`} alt="chatvia" />
+                                                                    : <img src={`${process.env.REACT_APP_BASE_API_URL || localStorage.getItem("baseApi")}/Auth/img?key=${dt?.avatar}`} alt="chatvia" />
                                                             }
                                                         </div>
 
