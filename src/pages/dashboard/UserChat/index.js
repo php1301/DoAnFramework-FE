@@ -15,7 +15,7 @@ import ChatInput from "./ChatInput";
 import FileList from "./FileList";
 
 //actions
-import { openUserSidebar, setFullUser, addMessage, chatLogs, setIsTyping } from "../../../redux/actions";
+import { openUserSidebar, setFullUser, addMessage, chatLogs, setIsTyping, removeMessage } from "../../../redux/actions";
 
 //Import Images
 import avatar4 from "../../../assets/images/users/avatar-4.jpg";
@@ -144,14 +144,8 @@ function UserChat(props) {
     }
 
 
-    const deleteMessage = (id) => {
-        let conversation = chatMessages;
-
-        let filtered = conversation.filter(function (item) {
-            return item.id !== id;
-        });
-
-        setchatMessages(filtered);
+    const deleteMessage = (groupCode, messageId) => {
+        props?.removeMessage(groupCode, messageId);
     }
 
 
@@ -188,7 +182,7 @@ function UserChat(props) {
                                             {chat?.data?.map((dt, keyDt) => {
                                                 return (
 
-                                                    <li key={keyDt} className={dt.CreatedBy === user ? "right" : ""} >
+                                                    <li key={keyDt} className={dt.CreatedBy === user ? "right" : ""}>
                                                         <div className="conversation-list">
 
                                                             <div className="chat-avatar">
@@ -208,45 +202,50 @@ function UserChat(props) {
 
                                                             <div className="user-chat-content">
                                                                 <div className="ctext-wrap">
-                                                                    <div className="ctext-wrap-content">
-                                                                        {
-                                                                            (dt.Type !== "attachment" && dt.type !== "media") && dt?.Content &&
-                                                                            <p className="mb-0">
-                                                                                {dt?.Content}
-                                                                            </p>
-                                                                        }
-                                                                        {
-                                                                            dt.Type === "media" &&
-                                                                            // image list component
-                                                                            <ImageItem image={dt.Path} title={dt.Content} />
-                                                                        }
-                                                                        {
-                                                                            dt.Type === "attachment" &&
-                                                                            //file input component
-                                                                            <FileList path={`${process.env.REACT_APP_BASE_API_URL || localStorage.getItem("baseApi")}/Auth/file?key=${dt?.Path}`} fileName={dt.Content} fileSize={chat.size} />
-                                                                        }
-                                                                        {/* {
+                                                                    {dt?.isRemoved !== 2 ? (
+                                                                        <>
+                                                                            <div className="ctext-wrap-content">
+                                                                                {
+                                                                                    (dt.Type !== "attachment" && dt.type !== "media") && dt?.Content &&
+                                                                                    <p className="mb-0">
+                                                                                        {dt?.Content}
+                                                                                    </p>
+                                                                                }
+                                                                                {
+                                                                                    dt.Type === "media" &&
+                                                                                    // image list component
+                                                                                    <ImageItem image={dt.Path} title={dt.Content} />
+                                                                                }
+                                                                                {
+                                                                                    dt.Type === "attachment" &&
+                                                                                    //file input component
+                                                                                    <FileList path={`${process.env.REACT_APP_BASE_API_URL || localStorage.getItem("baseApi")}/Auth/file?key=${dt?.Path}`} fileName={dt.Content} fileSize={chat.size} />
+                                                                                }
+                                                                                {/* {
                                                                         !chat.isTyping && <p className="chat-time mb-0"><i className="ri-time-line align-middle"></i> <span className="align-middle">{chat.time}</span></p>
                                                                     } */}
-                                                                        {
-                                                                            <p className="chat-time mb-0"><i className="ri-time-line align-middle"></i> <span className="align-middle">{formatDate(dt?.Created)}</span></p>
-                                                                        }
-                                                                    </div>
-                                                                    {
-                                                                        !dt.isTyping &&
-                                                                        <UncontrolledDropdown className="align-self-start">
-                                                                            <DropdownToggle tag="a">
-                                                                                <i className="ri-more-2-fill"></i>
-                                                                            </DropdownToggle>
-                                                                            <DropdownMenu>
-                                                                                <DropdownItem>{t('Copy')} <i className="ri-file-copy-line float-end text-muted"></i></DropdownItem>
-                                                                                <DropdownItem>{t('Save')} <i className="ri-save-line float-end text-muted"></i></DropdownItem>
-                                                                                <DropdownItem onClick={toggle}>Forward <i className="ri-chat-forward-line float-end text-muted"></i></DropdownItem>
-                                                                                <DropdownItem onClick={() => deleteMessage(dt.id)}>Delete <i className="ri-delete-bin-line float-end text-muted"></i></DropdownItem>
-                                                                            </DropdownMenu>
-                                                                        </UncontrolledDropdown>
-                                                                    }
+                                                                                {
+                                                                                    <p className="chat-time mb-0"><i className="ri-time-line align-middle"></i> <span className="align-middle">{formatDate(dt?.Created)}</span></p>
+                                                                                }
+                                                                            </div>
 
+                                                                            {!dt.isTyping &&
+                                                                                <UncontrolledDropdown className="align-self-start">
+                                                                                    <DropdownToggle tag="a">
+                                                                                        <i className="ri-more-2-fill"></i>
+                                                                                    </DropdownToggle>
+                                                                                    <DropdownMenu>
+                                                                                        <DropdownItem>{t('Copy')} <i className="ri-file-copy-line float-end text-muted"></i></DropdownItem>
+                                                                                        {currentUser === dt?.CreatedBy && <DropdownItem onClick={() => deleteMessage(dt?.GroupCode, dt?.Id)}>Delete <i className="ri-delete-bin-line float-end text-muted"></i></DropdownItem>}
+                                                                                    </DropdownMenu>
+                                                                                </UncontrolledDropdown>
+                                                                            }
+                                                                        </>
+                                                                    ) : (<div className="ctext-wrap-content" > <p className="mb-0" style={{
+                                                                        opacity: "0.5"
+                                                                    }}>
+                                                                        Tin Nhắn Đã Được Thu Hồi
+                                                                    </p></div>)}
                                                                 </div>
                                                                 {
                                                                     <div className="conversation-name">{dt.UserCreatedBy.FullName}</div>
@@ -373,5 +372,5 @@ const mapStateToProps = (state) => {
     return { active_user, userSidebar, log, connection, isTyping, profile, seen, lastMessage };
 };
 
-export default withRouter(connect(mapStateToProps, { openUserSidebar, setFullUser, addMessage, chatLogs, setIsTyping })(UserChat));
+export default withRouter(connect(mapStateToProps, { openUserSidebar, setFullUser, addMessage, chatLogs, setIsTyping, removeMessage })(UserChat));
 

@@ -1,36 +1,63 @@
 import React from 'react';
-import Routes from './routes/';
+import { connect } from "react-redux";
+const LightApp = React.lazy(() => import("./LightApp"))
+const DarkApp = React.lazy(() => import("./DarkApp"))
 
-//Import Scss
-import "./assets/scss/themes.scss";
 
-//fackbackend
-import fakeBackend from './helpers/fake-backend';
+function App({ mode }) {
+  // const [state, setState] = useState(mode);
+  // const handleMode = () => {
+  //   console.log(mode)
+  //   if (mode !== "dark") {
+  //     require("./assets/scss/dark.scss")
+  //   }
+  //   else {
+  //     delete require.cache[require.resolve('./assets/scss/dark.scss')]
+  //     require("./assets/scss/themes.scss")
+  //   }
+  // }
 
-// //Firebase helper
-// import { initFirebaseBackend } from "./helpers/firebase";
-
-// TODO
-// fakeBackend();
-
-// const firebaseConfig = {
-// 	apiKey: process.env.REACT_APP_APIKEY,
-// 	authDomain: process.env.REACT_APP_AUTHDOMAIN,
-// 	databaseURL: process.env.REACT_APP_DATABASEURL,
-// 	projectId: process.env.REACT_APP_PROJECTID,
-// 	storageBucket: process.env.REACT_APP_STORAGEBUCKET,
-// 	messagingSenderId: process.env.REACT_APP_MESSAGINGSENDERID,
-// 	appId: process.env.REACT_APP_APPID,
-// 	measurementId: process.env.REACT_APP_MEASUREMENTID,
-// };
-  
-// // init firebase backend
-// initFirebaseBackend(firebaseConfig);
-
-function App() {
+  // useEffect(() => {
+  //   setState(mode)
+  // }, [mode])
   return (
-    <Routes />
+    mode === "dark" ? <DarkApp /> : <LightApp />
   );
 }
+const mapStateToProps = (state) => {
+  const { mode } = state.Layout;
+  return { mode };
+};
+export default (connect(mapStateToProps, {}))(App);
+// import React, { useEffect } from 'react';
+// import { connect } from "react-redux";
+// // const LightApp = React.lazy(() => import("./LightApp"))
+// // const DarkApp = React.lazy(() => import("./DarkApp"))
+// import Routes from './routes/';
 
-export default App;
+
+// function App({ mode }) {
+//   const handleMode = () => {
+//     console.log(mode)
+//     if (mode !== "dark") {
+//       require("./assets/scss/dark.scss")
+//     }
+//     else {
+//       delete require.cache[require.resolve('./assets/scss/dark.scss')]
+//       require("./assets/scss/themes.scss")
+//     }
+//   }
+
+//   useEffect(() => {
+//     handleMode()
+//   }, [mode])
+//   return (
+//     // mode === "dark" ? <DarkApp /> : <LightApp />
+//     <Routes />
+//   );
+// }
+// const mapStateToProps = (state) => {
+//   const { mode } = state.Layout;
+//   return { mode };
+// };
+// export default (connect(mapStateToProps, {}))(App);

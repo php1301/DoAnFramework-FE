@@ -12,6 +12,7 @@ import {
     SEARCH_CONTACTS,
     ADD_CONTACTS,
     CHANGE_GROUP_AVATAR,
+    REMOVE_MESSAGE,
 } from './constants';
 
 
@@ -19,13 +20,14 @@ import {
     activeUser,
     apiError, setChatHistory, setChatLogs, setContact, setSearchContact,
 } from './actions';
-import { AddContact, AddGroup, GetChatBoardInfo, GetChatHistory, GetContact, GetMessageByContact, GetMessageByGroup, SearchContact, SendMessage, UpdateGroupAvatar } from '../../helpers/api-constant';
+import { AddContact, AddGroup, GetChatBoardInfo, GetChatHistory, GetContact, GetMessageByContact, GetMessageByGroup, RemoveMessage, SearchContact, SendMessage, UpdateGroupAvatar } from '../../helpers/api-constant';
 
 
 
 const create = new APIClient().create;
 const get = new APIClient().get;
 const update = new APIClient().update;
+const remove = new APIClient().delete;
 
 
 
@@ -169,7 +171,24 @@ export function* getMessageByContact(contactCode) {
     }
 }
 
+function* removeMessage(payload) {
+    try {
+        const { groupCode, messageId } = payload?.payload;
 
+        setAuthorization()
+        const response = yield call(create, RemoveMessage, {}, {
+            params: {
+                groupCode: groupCode === null ? "" : groupCode,
+                messageId: messageId === null ? "" : messageId
+            }
+        });
+        console.log("Removed", response)
+
+    }
+    catch (error) {
+        yield put(apiError(error));
+    }
+}
 function* addMessage(payload) {
     try {
         const { groupCode, formData } = payload?.payload;
@@ -193,7 +212,9 @@ function* addMessage(payload) {
 export function* watchAddMessage() {
     yield takeEvery(ADD_MESSAGE, addMessage);
 }
-
+export function* watchRemoveMessage(){
+    yield takeEvery(REMOVE_MESSAGE, removeMessage)
+}
 export function* watchChatLogs() {
     yield takeEvery(CHAT_LOGS, getMessage);
 }
@@ -212,13 +233,13 @@ export function* watchAddContact() {
 export function* watchCreateGroup() {
     yield takeEvery(CREATE_GROUP, createGroup);
 }
-
 export function* watchChangeGroupAvatar() {
     yield takeEvery(CHANGE_GROUP_AVATAR, changeGroupAvatar);
 }
 function* chatSaga() {
     yield all([
         fork(watchAddMessage),
+        fork(watchRemoveMessage),
         fork(watchChatLogs),
         fork(watchChatHistory),
         fork(watchGetContacts),

@@ -4,7 +4,7 @@ import { Nav, NavItem, NavLink, UncontrolledTooltip, Dropdown, DropdownItem, Dro
 import classnames from "classnames";
 import { connect } from "react-redux";
 
-import { setActiveTab } from "../../redux/actions";
+import { setActiveTab, changeMode } from "../../redux/actions";
 
 //Import Images
 import logo from "../../assets/images/logo.svg"
@@ -14,10 +14,8 @@ import i18n from '../../i18n';
 
 // falgs
 import usFlag from "../../assets/images/flags/us.jpg";
-import spain from "../../assets/images/flags/spain.jpg";
-import germany from "../../assets/images/flags/germany.jpg";
-import italy from "../../assets/images/flags/italy.jpg";
-import russia from "../../assets/images/flags/russia.jpg";
+import vietnam from "../../assets/images/flags/vietnam.jpg";
+
 
 function LeftSidebarMenu(props) {
 
@@ -43,8 +41,8 @@ function LeftSidebarMenu(props) {
         /* set the selected language to i18n */
         i18n.changeLanguage(lng);
 
-        if (lng === "sp")
-            setlng("Spanish");
+        if (lng === "vn")
+            setlng("Vietnam");
         else if (lng === "gr")
             setlng("German");
         else if (lng === "rs")
@@ -148,23 +146,19 @@ function LeftSidebarMenu(props) {
                                     <img src={usFlag} alt="user" className="me-1" height="12" /> <span className="align-middle">English</span>
                                 </DropdownItem>
 
-                                <DropdownItem onClick={() => changeLanguageAction('sp')} active={lng === "Spanish"}>
-                                    <img src={spain} alt="user" className="me-1" height="12" /> <span className="align-middle">Spanish</span>
-                                </DropdownItem>
-
-                                <DropdownItem onClick={() => changeLanguageAction('gr')} active={lng === "German"}>
-                                    <img src={germany} alt="user" className="me-1" height="12" /> <span className="align-middle">German</span>
-                                </DropdownItem>
-
-                                <DropdownItem onClick={() => changeLanguageAction('it')} active={lng === "Italian"}>
-                                    <img src={italy} alt="user" className="me-1" height="12" /> <span className="align-middle">Italian</span>
-                                </DropdownItem>
-
-                                <DropdownItem onClick={() => changeLanguageAction('rs')} active={lng === "Russian"}>
-                                    <img src={russia} alt="user" className="me-1" height="12" /> <span className="align-middle">Russian</span>
+                                <DropdownItem onClick={() => changeLanguageAction('vn')} active={lng === "Vietnam"}>
+                                    <img src={vietnam} alt="user" className="me-1" height="12" /> <span className="align-middle">Vietnam</span>
                                 </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
+                        <li className="nav-item">
+                            <NavLink id="light-dark" target="_blank" onClick={() => { props?.changeMode(); window.location.reload() }}>
+                                <i className="ri-sun-line theme-mode-icon"></i>
+                            </NavLink>
+                            <UncontrolledTooltip target="light-dark" placement="right">
+                                Dark / Light Mode
+                            </UncontrolledTooltip>
+                        </li>
                         <Dropdown nav isOpen={dropdownOpen} className="nav-item btn-group dropup profile-user-dropdown" toggle={toggle}>
                             <DropdownToggle className="nav-link" tag="a">
                                 {props.profile?.Avatar === "Resource/no_img.jpg" ?
@@ -198,5 +192,6 @@ const mapStatetoProps = state => {
 };
 
 export default connect(mapStatetoProps, {
-    setActiveTab
+    setActiveTab,
+    changeMode
 })(LeftSidebarMenu);

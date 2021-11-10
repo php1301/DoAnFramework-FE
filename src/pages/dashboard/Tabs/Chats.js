@@ -225,15 +225,20 @@ class Chats extends Component {
                                                                             </span>
                                                                         </>
                                                                         :
-                                                                        <>
+                                                                        chat?.LastMessage?.isRemoved !== 2 ? (<>
                                                                             {
                                                                                 (chat?.LastMessage?.Type === "media") ? <i className="ri-image-fill align-middle me-1"></i> : null
                                                                             }
                                                                             {
                                                                                 (chat?.LastMessage?.Type === "attachment") ? <i className="ri-file-text-fill align-middle me-1"></i> : null
                                                                             }
-                                                                            {chat?.LastMessage?.Content.length > 30 ? chat?.LastMessage?.Content?.substring(0, 30) + "..." : chat?.LastMessage?.Content}
+                                                                            {chat?.LastMessage?.Content.length > 30 ?
+                                                                                chat?.LastMessage?.UserCreatedBy?.FullName.split(" ")[0] + ": " +
+                                                                                chat?.LastMessage?.Content?.substring(0, 30) + "..." :
+                                                                                chat?.LastMessage?.UserCreatedBy?.FullName.split(" ")[0] + ": " +
+                                                                                chat?.LastMessage?.Content}
                                                                         </>
+                                                                        ) : (<> <i className="ri-chat-delete-fill align-middle me-1"></i>  {`${chat?.LastMessage?.UserCreatedBy?.FullName.split(" ")[0]} đã thu hồi tin nhắn`}</>)
                                                                 }
                                                             </p>
                                                         </div>
