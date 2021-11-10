@@ -44,6 +44,7 @@ function* listenNotifications() {
       connection.on('MessageSeen', handler)
       connection.on('GetActiveFriends', handler)
       connection.on('callHubListener', handler)
+      connection.on('SyncSignal', handler)
       return () => { connection.off() }
     })
     const getIsTyping = connection => eventChannel(emit => {
@@ -70,6 +71,12 @@ function* listenNotifications() {
           }
           if (!lastMessage?.Id) {
             yield put(chatLogs(data?.groupCode, null, true))
+          }
+          if (data?.type === "sync") {
+            yield put(chatLogs(active_user?.Code || active_user?.UserCode, null, false))
+            if (!lastMessage?.Id) {
+              yield put(chatLogs(data?.groupCode, null, true))
+            }
           }
           // else {
           //   yield put(chatLogs(data?.groupCode || active_user.Code, null, false))

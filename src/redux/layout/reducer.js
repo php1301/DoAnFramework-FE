@@ -5,7 +5,8 @@ import {
 	CLOSE_USER_PROFILE_SIDEBAR,
 	SET_CONVERSATION_NAME_IN_OPEN_CHAT,
 	TOGGLE_CALL_MODAL,
-	CHANGE_VIEW
+	CHANGE_VIEW,
+	CHANGE_MODE
 } from "./constants";
 
 const INIT_STATE = {
@@ -14,6 +15,7 @@ const INIT_STATE = {
 	conversationName: "Doris Brown",
 	callModal: false,
 	view: "Chat",
+	mode: localStorage.getItem("mode") || localStorage.setItem("mode", "light")
 };
 
 const Layout = (state = INIT_STATE, action) => {
@@ -34,6 +36,21 @@ const Layout = (state = INIT_STATE, action) => {
 				...state,
 				view: action?.payload
 			};
+		case CHANGE_MODE:
+			if (state?.mode === "dark") {
+				localStorage.setItem("mode", "light")
+				return {
+					...state,
+					mode: "light"
+				}
+			}
+			else {
+				localStorage.setItem("mode", "dark")
+				return {
+					...state,
+					mode: "dark"
+				}
+			}
 		case CLOSE_USER_PROFILE_SIDEBAR:
 			return {
 				...state,

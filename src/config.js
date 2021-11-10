@@ -1,7 +1,8 @@
 const config = {
-    API_URL: "https://localhost:44382/api/",
+    API_URL: "http://localhost:54984/api/",
     AUTH_BACKEND: 'Dummy',
-    CHATHUB: "https://localhost:44382/chatHub"
+    CHATHUB: "http://localhost:54984/chatHub"
+    // 54984
 }
 
 export default config

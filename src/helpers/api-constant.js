@@ -8,6 +8,7 @@ export const GetChatHistory = "chat/get-history";
 export const GetChatBoardInfo = "chat/get-info";
 export const AddGroup = "chat/groups";
 export const SendMessage = "chat/send-message";
+export const RemoveMessage = "chat/remove-message";
 export const GetMessageByGroup = "chat/get-message-by-group";
 export const GetMessageByContact = "chat/get-message-by-contact";
 export const UpdateGroupAvatar = "chat/update-group-avatar";

@@ -4,7 +4,8 @@ import {
 	CLOSE_USER_PROFILE_SIDEBAR,
 	SET_CONVERSATION_NAME_IN_OPEN_CHAT,
 	TOGGLE_CALL_MODAL,
-	CHANGE_VIEW
+	CHANGE_VIEW,
+	CHANGE_MODE
 } from "./constants";
 
 export const setActiveTab = (tabId) => ({
@@ -26,6 +27,9 @@ export const toggleCallModal = () => ({
 export const changeView = (payload) => ({
 	type: CHANGE_VIEW,
 	payload
+})
+export const changeMode = () => ({
+	type: CHANGE_MODE,
 })
 export const setconversationNameInOpenChat = (conversationName) => ({
 	type: SET_CONVERSATION_NAME_IN_OPEN_CHAT,

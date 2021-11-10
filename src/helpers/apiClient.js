@@ -61,8 +61,8 @@ class APIClient {
     /**
      * Delete 
      */
-    delete = (url) => {
-        return axios.delete(url);
+    delete = (url, data, options) => {
+        return axios.delete(url, data, options);
     }
 }
 
