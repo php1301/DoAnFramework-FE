@@ -13,9 +13,7 @@ import { registerUser, apiError } from '../../redux/actions';
 import { useTranslation } from 'react-i18next';
 
 //Import Images
-import logodark from "../../assets/images/logo-dark.png";
-import logolight from "../../assets/images/logo-light.png";
-
+import logodark from "../../assets/images/logo.svg";
 /**
  * Register component
  * @param {*} props 
@@ -63,11 +61,11 @@ const Register = (props) => {
                             <div className="text-center mb-4">
                                 <Link to="/" className="auth-logo mb-5 d-block">
                                     <img src={logodark} alt="" height="30" className="logo logo-dark" />
-                                    <img src={logolight} alt="" height="30" className="logo logo-light" />
+                                    <img src={logodark} alt="" height="30" className="logo logo-light" />
                                 </Link>
 
                                 <h4>{t('Sign up')}</h4>
-                                <p className="text-muted mb-4">{t('Get your Chatvia account now')}.</p>
+                                <p className="text-muted mb-4">{t('Get your Chatlife account now')}.</p>
 
                             </div>
 
@@ -203,7 +201,7 @@ const Register = (props) => {
                                             </div>
 
                                             <div className="mt-4 text-center">
-                                                <p className="text-muted mb-0">{t('By registering you agree to the Chatvia')} <Link to="#" className="text-primary">{t('Terms of Use')}</Link></p>
+                                                <p className="text-muted mb-0">{t('By registering you agree to the Chatlife')} <Link to="#" className="text-primary">{t('Terms of Use')}</Link></p>
                                             </div>
 
                                         </Form>
@@ -213,7 +211,7 @@ const Register = (props) => {
 
                             <div className="mt-5 text-center">
                                 <p>{t('Already have an account')} ? <Link to="/login" className="font-weight-medium text-primary"> {t('Signin')} </Link> </p>
-                                <p>© {t('2021 Chatvia')}. {t('Crafted with')} <i className="mdi mdi-heart text-danger"></i> {t('by Themesbrand')}</p>
+                                <p>© {t('2021 Chatlife')}. {t('Crafted with')} <i className="mdi mdi-heart text-danger"></i> {t('by php1301')}</p>
                             </div>
                         </Col>
                     </Row>

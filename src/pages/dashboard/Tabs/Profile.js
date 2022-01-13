@@ -66,7 +66,7 @@ function Profile(props) {
                                     {props.profile?.FullName?.charAt(0)}
                                 </span>
                             </div> :
-                            <img src={`${process.env.REACT_APP_BASE_API_URL || localStorage.getItem("baseApi")}/Auth/img?key=${props.profile?.Avatar}`} className="rounded-circle avatar-lg img-thumbnail" alt="chatvia" />}                                </div>
+                            <img src={`${process.env.REACT_APP_BASE_API_URL || localStorage.getItem("baseApi")}/Auth/img?key=${props.profile?.Avatar}`} className="rounded-circle avatar-lg img-thumbnail" alt="Chatlife" />}                                </div>
 
                     <h5 className="font-size-16 mb-1 text-truncate">{props?.profile?.FullName}</h5>
                     <p className="text-muted text-truncate mb-1"><i className="ri-record-circle-fill font-size-10 text-success me-1 d-inline-block"></i> {t('Active')}</p>

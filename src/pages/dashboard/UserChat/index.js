@@ -195,7 +195,7 @@ function UserChat(props) {
                                                                                 </span>
                                                                             </div>
                                                                         </div>
-                                                                        : <img src={`${process.env.REACT_APP_BASE_API_URL || localStorage.getItem("baseApi")}/Auth/img?key=${dt?.UserCreatedBy?.Avatar}`} alt="chatvia" />
+                                                                        : <img src={`${process.env.REACT_APP_BASE_API_URL || localStorage.getItem("baseApi")}/Auth/img?key=${dt?.UserCreatedBy?.Avatar}`} alt="Chatlife" />
                                                                 }
                                                                 <span className="user-status"></span>
                                                             </div>
@@ -270,7 +270,7 @@ function UserChat(props) {
                                                                                                         width: "15px",
                                                                                                         height: "15px",
                                                                                                     }}
-                                                                                                    src={`${process.env.REACT_APP_BASE_API_URL || localStorage.getItem("baseApi")}/Auth/img?key=${ms?.avatar}`} alt="chatvia" />
+                                                                                                    src={`${process.env.REACT_APP_BASE_API_URL || localStorage.getItem("baseApi")}/Auth/img?key=${ms?.avatar}`} alt="Chatlife" />
                                                                                         }
                                                                                     </div>
                                                                                     <UncontrolledTooltip target={`bubble-${idx}`} placement="top">
@@ -308,7 +308,7 @@ function UserChat(props) {
                                                                             </span>
                                                                         </div>
                                                                     </div>
-                                                                    : <img src={`${process.env.REACT_APP_BASE_API_URL || localStorage.getItem("baseApi")}/Auth/img?key=${dt?.avatar}`} alt="chatvia" />
+                                                                    : <img src={`${process.env.REACT_APP_BASE_API_URL || localStorage.getItem("baseApi")}/Auth/img?key=${dt?.avatar}`} alt="Chatlife" />
                                                             }
                                                         </div>
 

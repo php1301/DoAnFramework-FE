@@ -48,7 +48,7 @@ function OnlineUsers(props) {
                                                     </div>
                                                     :
                                                     <>
-                                                        <img src={`${process.env.REACT_APP_BASE_API_URL || localStorage.getItem("baseApi")}/Auth/img?key=${a?.avatar}`} className="img-fluid rounded-circle" alt="chatvia" />
+                                                        <img src={`${process.env.REACT_APP_BASE_API_URL || localStorage.getItem("baseApi")}/Auth/img?key=${a?.avatar}`} className="img-fluid rounded-circle" alt="Chatlife" />
                                                     </>
                                                 }
                                             </>

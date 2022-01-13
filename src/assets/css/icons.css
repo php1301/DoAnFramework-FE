@@ -1,9 +1,9 @@
 /*
 Template Name: Skote - Responsive Bootstrap 5 Admin Dashboard
-Author: Themesbrand
+
 Version: 1.0.0
-Website: https://themesbrand.com/
-Contact: themesbrand@gmail.com
+php1301
+
 File: Icons Css File
 */
 /* MaterialDesignIcons.com */
@@ -18216,7 +18216,7 @@ File: Icons Css File
   -webkit-transform: scaleX(-1);
   transform: scaleX(-1);
   -webkit-filter: FlipH;
-          filter: FlipH;
+  filter: FlipH;
   -ms-filter: "FlipH";
 }
 
@@ -18224,7 +18224,7 @@ File: Icons Css File
   -webkit-transform: scaleY(-1);
   transform: scaleY(-1);
   -webkit-filter: FlipV;
-          filter: FlipV;
+  filter: FlipV;
   -ms-filter: "FlipV";
 }
 
@@ -18238,6 +18238,7 @@ File: Icons Css File
     -webkit-transform: rotate(0deg);
     transform: rotate(0deg);
   }
+
   100% {
     -webkit-transform: rotate(359deg);
     transform: rotate(359deg);
@@ -18249,11 +18250,13 @@ File: Icons Css File
     -webkit-transform: rotate(0deg);
     transform: rotate(0deg);
   }
+
   100% {
     -webkit-transform: rotate(359deg);
     transform: rotate(359deg);
   }
 }
+
 @font-face {
   font-family: 'boxicons';
   font-weight: normal;
@@ -18281,7 +18284,7 @@ File: Icons Css File
   list-style: none;
 }
 
-.bx-ul > li {
+.bx-ul>li {
   position: relative;
 }
 
@@ -18299,6 +18302,7 @@ File: Icons Css File
     -webkit-transform: rotate(0);
     transform: rotate(0);
   }
+
   100% {
     -webkit-transform: rotate(359deg);
     transform: rotate(359deg);
@@ -18310,6 +18314,7 @@ File: Icons Css File
     -webkit-transform: rotate(0);
     transform: rotate(0);
   }
+
   100% {
     -webkit-transform: rotate(359deg);
     transform: rotate(359deg);
@@ -18322,6 +18327,7 @@ File: Icons Css File
     transform: scale(1);
     opacity: 1;
   }
+
   90% {
     -webkit-transform: scale(1.5);
     transform: scale(1.5);
@@ -18335,6 +18341,7 @@ File: Icons Css File
     transform: scale(1);
     opacity: 1;
   }
+
   90% {
     -webkit-transform: scale(1.5);
     transform: scale(1.5);
@@ -18346,9 +18353,11 @@ File: Icons Css File
   0% {
     opacity: 1;
   }
+
   45% {
     opacity: 0;
   }
+
   90% {
     opacity: 1;
   }
@@ -18358,9 +18367,11 @@ File: Icons Css File
   0% {
     opacity: 1;
   }
+
   45% {
     opacity: 0;
   }
+
   90% {
     opacity: 1;
   }
@@ -18372,6 +18383,7 @@ File: Icons Css File
     transform: translateX(0);
     opacity: 1;
   }
+
   75% {
     -webkit-transform: translateX(-20px);
     transform: translateX(-20px);
@@ -18385,6 +18397,7 @@ File: Icons Css File
     transform: translateX(0);
     opacity: 1;
   }
+
   75% {
     -webkit-transform: translateX(-20px);
     transform: translateX(-20px);
@@ -18398,6 +18411,7 @@ File: Icons Css File
     transform: translateX(0);
     opacity: 1;
   }
+
   75% {
     -webkit-transform: translateX(20px);
     transform: translateX(20px);
@@ -18411,6 +18425,7 @@ File: Icons Css File
     transform: translateX(0);
     opacity: 1;
   }
+
   75% {
     -webkit-transform: translateX(20px);
     transform: translateX(20px);
@@ -18424,6 +18439,7 @@ File: Icons Css File
     transform: translateY(0);
     opacity: 1;
   }
+
   75% {
     -webkit-transform: translateY(-20px);
     transform: translateY(-20px);
@@ -18437,6 +18453,7 @@ File: Icons Css File
     transform: translateY(0);
     opacity: 1;
   }
+
   75% {
     -webkit-transform: translateY(-20px);
     transform: translateY(-20px);
@@ -18450,6 +18467,7 @@ File: Icons Css File
     transform: translateY(0);
     opacity: 1;
   }
+
   75% {
     -webkit-transform: translateY(20px);
     transform: translateY(20px);
@@ -18463,6 +18481,7 @@ File: Icons Css File
     transform: translateY(0);
     opacity: 1;
   }
+
   75% {
     -webkit-transform: translateY(20px);
     transform: translateY(20px);
@@ -18475,11 +18494,13 @@ File: Icons Css File
     -webkit-transform: scale3d(1, 1, 1);
     transform: scale3d(1, 1, 1);
   }
+
   10%,
   20% {
     -webkit-transform: scale3d(0.95, 0.95, 0.95) rotate3d(0, 0, 1, -10deg);
     transform: scale3d(0.95, 0.95, 0.95) rotate3d(0, 0, 1, -10deg);
   }
+
   30%,
   50%,
   70%,
@@ -18487,12 +18508,14 @@ File: Icons Css File
     -webkit-transform: scale3d(1, 1, 1) rotate3d(0, 0, 1, 10deg);
     transform: scale3d(1, 1, 1) rotate3d(0, 0, 1, 10deg);
   }
+
   40%,
   60%,
   80% {
     -webkit-transform: scale3d(1, 1, 1) rotate3d(0, 0, 1, -10deg);
     transform: scale3d(1, 1, 1) rotate3d(0, 0, 1, -10deg);
   }
+
   to {
     -webkit-transform: scale3d(1, 1, 1);
     transform: scale3d(1, 1, 1);
@@ -18504,11 +18527,13 @@ File: Icons Css File
     -webkit-transform: scale3d(1, 1, 1);
     transform: scale3d(1, 1, 1);
   }
+
   10%,
   20% {
     -webkit-transform: scale3d(0.95, 0.95, 0.95) rotate3d(0, 0, 1, -10deg);
     transform: scale3d(0.95, 0.95, 0.95) rotate3d(0, 0, 1, -10deg);
   }
+
   30%,
   50%,
   70%,
@@ -18516,12 +18541,14 @@ File: Icons Css File
     -webkit-transform: scale3d(1, 1, 1) rotate3d(0, 0, 1, 10deg);
     transform: scale3d(1, 1, 1) rotate3d(0, 0, 1, 10deg);
   }
+
   40%,
   60%,
   80% {
     -webkit-transform: rotate3d(0, 0, 1, -10deg);
     transform: rotate3d(0, 0, 1, -10deg);
   }
+
   to {
     -webkit-transform: scale3d(1, 1, 1);
     transform: scale3d(1, 1, 1);
@@ -18645,31 +18672,31 @@ File: Icons Css File
 
 .bx-rotate-90 {
   -webkit-transform: rotate(90deg);
-          transform: rotate(90deg);
+  transform: rotate(90deg);
   -ms-filter: 'progid:DXImageTransform.Microsoft.BasicImage(rotation=1)';
 }
 
 .bx-rotate-180 {
   -webkit-transform: rotate(180deg);
-          transform: rotate(180deg);
+  transform: rotate(180deg);
   -ms-filter: 'progid:DXImageTransform.Microsoft.BasicImage(rotation=2)';
 }
 
 .bx-rotate-270 {
   -webkit-transform: rotate(270deg);
-          transform: rotate(270deg);
+  transform: rotate(270deg);
   -ms-filter: 'progid:DXImageTransform.Microsoft.BasicImage(rotation=3)';
 }
 
 .bx-flip-horizontal {
   -webkit-transform: scaleX(-1);
-          transform: scaleX(-1);
+  transform: scaleX(-1);
   -ms-filter: 'progid:DXImageTransform.Microsoft.BasicImage(rotation=0, mirror=1)';
 }
 
 .bx-flip-vertical {
   -webkit-transform: scaleY(-1);
-          transform: scaleY(-1);
+  transform: scaleY(-1);
   -ms-filter: 'progid:DXImageTransform.Microsoft.BasicImage(rotation=2, mirror=1)';
 }
 
@@ -23328,7 +23355,7 @@ File: Icons Css File
   padding-left: 0;
 }
 
-.fa-ul > li {
+.fa-ul>li {
   position: relative;
 }
 
@@ -23385,6 +23412,7 @@ File: Icons Css File
     -webkit-transform: rotate(0deg);
     transform: rotate(0deg);
   }
+
   100% {
     -webkit-transform: rotate(360deg);
     transform: rotate(360deg);
@@ -23396,6 +23424,7 @@ File: Icons Css File
     -webkit-transform: rotate(0deg);
     transform: rotate(0deg);
   }
+
   100% {
     -webkit-transform: rotate(360deg);
     transform: rotate(360deg);
@@ -29826,4 +29855,5 @@ File: Icons Css File
 .dripicons-zoom-out:before {
   content: "\e069";
 }
+
 /*# sourceMappingURL=icons.css.map */

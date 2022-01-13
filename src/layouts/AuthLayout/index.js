@@ -20,7 +20,7 @@ class Index extends Component {
         let currentage = this.capitalizeFirstLetter(this.props.location.pathname);
 
         //set document title according to page path name
-        document.title = currentage + " | Chatvia - Responsive Bootstrap 5 Admin Dashboard";
+        document.title = currentage + " | Chatlife - Responsive Bootstrap 5 Admin Dashboard";
     }
     
     render() {

@@ -63,7 +63,7 @@ const ForgetPassword = (props) => {
                                 </Link>
 
                                 <h4>{t('Reset Password')}</h4>
-                                <p className="text-muted mb-4">{t('Reset Password With Chatvia.')}</p>
+                                <p className="text-muted mb-4">{t('Reset Password With Chatlife.')}</p>
 
                             </div>
 
@@ -113,7 +113,7 @@ const ForgetPassword = (props) => {
 
                             <div className="mt-5 text-center">
                                 <p>{t('Remember It')} ? <Link to="login" className="font-weight-medium text-primary"> {t('Signin')} </Link> </p>
-                                <p>© {t('2021 Chatvia')}. {t('Crafted with')} <i className="mdi mdi-heart text-danger"></i> {t('by Themesbrand')}</p>
+                                <p>© {t('2021 Chatlife')}. {t('Crafted with')} <i className="mdi mdi-heart text-danger"></i> {t('by php1301')}</p>
                             </div>
                         </Col>
                     </Row>

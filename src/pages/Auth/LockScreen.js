@@ -91,7 +91,7 @@ function LockScreen(props) {
 
                         <div className="mt-5 text-center">
                             <p>{t('Not you')} ? {t('return')} <Link to="login" className="font-weight-medium text-primary"> {t('Signin')} </Link> </p>
-                            <p>© {t('2021 Chatvia')}. {t('Crafted with')} <i className="mdi mdi-heart text-danger"></i> {t('by Themesbrand')}</p>
+                            <p>© {t('2021 Chatlife')}. {t('Crafted with')} <i className="mdi mdi-heart text-danger"></i> {t('by php1301')}</p>
                         </div>
                     </Col>
                 </Row>

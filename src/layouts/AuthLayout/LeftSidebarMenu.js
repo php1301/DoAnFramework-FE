@@ -123,7 +123,7 @@ function LeftSidebarMenu(props) {
                                             {props.profile?.FullName?.charAt(0)}
                                         </span>
                                     </div> :
-                                    <img src={`${process.env.REACT_APP_BASE_API_URL || localStorage.getItem("baseApi")}/Auth/img?key=${props.profile?.Avatar}`} className="profile-user rounded-circle" alt="chatvia" />}                            </DropdownToggle>
+                                    <img src={`${process.env.REACT_APP_BASE_API_URL || localStorage.getItem("baseApi")}/Auth/img?key=${props.profile?.Avatar}`} className="profile-user rounded-circle" alt="Chatlife" />}                            </DropdownToggle>
                             <DropdownMenu className="dropdown-menu-end">
                                 <DropdownItem onClick={() => { toggleTab('profile'); }}>Profile <i className="ri-profile-line float-end text-muted"></i></DropdownItem>
                                 <DropdownItem onClick={() => { toggleTab('settings'); }}>Setting <i className="ri-settings-3-line float-end text-muted"></i></DropdownItem>
@@ -167,7 +167,7 @@ function LeftSidebarMenu(props) {
                                             {props.profile?.FullName?.charAt(0)}
                                         </span>
                                     </div> :
-                                    <img src={`${process.env.REACT_APP_BASE_API_URL || localStorage.getItem("baseApi")}/Auth/img?key=${props.profile?.Avatar}`} className="profile-user rounded-circle" alt="chatvia" />}                                    </DropdownToggle>
+                                    <img src={`${process.env.REACT_APP_BASE_API_URL || localStorage.getItem("baseApi")}/Auth/img?key=${props.profile?.Avatar}`} className="profile-user rounded-circle" alt="Chatlife" />}                                    </DropdownToggle>
                             <DropdownMenu>
                                 <DropdownItem onClick={() => { toggleTab('profile'); }}>Profile <i className="ri-profile-line float-end text-muted"></i></DropdownItem>
                                 <DropdownItem onClick={() => { toggleTab('settings'); }}>Setting <i className="ri-settings-3-line float-end text-muted"></i></DropdownItem>
