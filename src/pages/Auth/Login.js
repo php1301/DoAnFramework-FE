@@ -12,8 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { loginUser, apiError } from '../../redux/actions';
 
 //Import Images
-import logodark from "../../assets/images/logo-dark.png";
-import logolight from "../../assets/images/logo-light.png";
+import logodark from "../../assets/images/logo.svg";
 
 /**
  * Login component
@@ -59,11 +58,11 @@ const Login = (props) => {
                             <div className="text-center mb-4">
                                 <Link to="/" className="auth-logo mb-5 d-block">
                                     <img src={logodark} alt="" height="30" className="logo logo-dark" />
-                                    <img src={logolight} alt="" height="30" className="logo logo-light" />
+                                    <img src={logodark} alt="" height="30" className="logo logo-light" />
                                 </Link>
 
                                 <h4>{t('Sign in')}</h4>
-                                <p className="text-muted mb-4">{t('Sign in to continue to Chatvia')}.</p>
+                                <p className="text-muted mb-4">{t('Sign in to continue to Chatlife')}.</p>
 
                             </div>
 
@@ -142,7 +141,7 @@ const Login = (props) => {
 
                             <div className="mt-5 text-center">
                                 <p>{t("Don't have an account")} ? <Link to="register" className="font-weight-medium text-primary"> {t('Signup now')} </Link> </p>
-                                <p>© {t('2021 Chatvia')}. {t('Crafted with')} <i className="mdi mdi-heart text-danger"></i> {t('by Themesbrand')}</p>
+                                <p>© {t('2021 Chatlife')}. {t('Crafted with')} <i className="mdi mdi-heart text-danger"></i> {t('by Themesbrand')}</p>
                             </div>
                         </Col>
                     </Row>

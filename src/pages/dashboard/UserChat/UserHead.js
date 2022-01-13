@@ -67,7 +67,7 @@ function UserHead(props) {
                             {
                                 props.active_user?.Avatar !== "Resource/no_img.jpg" ?
                                     <div className="me-3 ms-0">
-                                        <img src={`${process.env.REACT_APP_BASE_API_URL || localStorage.getItem("baseApi")}/Auth/img?key=${props.active_user?.Avatar}`} className="rounded-circle avatar-xs" alt="chatvia" />
+                                        <img src={`${process.env.REACT_APP_BASE_API_URL || localStorage.getItem("baseApi")}/Auth/img?key=${props.active_user?.Avatar}`} className="rounded-circle avatar-xs" alt="Chatlife" />
                                     </div>
                                     : <div className="chat-user-img align-self-center me-3">
                                         <div className="avatar-xs">
@@ -137,7 +137,7 @@ function UserHead(props) {
                     <div className="text-center p-4">
                         {props.active_user?.Avatar !== "Resource/no_img.jpg" ?
                             <div className="avatar-lg mx-auto mb-4">
-                                <img src={`${process.env.REACT_APP_BASE_API_URL || localStorage.getItem("baseApi")}/Auth/img?key=${props.active_user?.Avatar}`} className="rounded-circle avatar-lg" alt="chatvia" />
+                                <img src={`${process.env.REACT_APP_BASE_API_URL || localStorage.getItem("baseApi")}/Auth/img?key=${props.active_user?.Avatar}`} className="rounded-circle avatar-lg" alt="Chatlife" />
                             </div>
                             : <div className="chat-user-img align-self-center me-3">
                                 <div className="avatar-lg mx-auto mb-4">

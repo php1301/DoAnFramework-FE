@@ -4,7 +4,7 @@ import MockAdapter from 'axios-mock-adapter';
 const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjb2RlcnRoZW1lcyIsImlhdCI6MTU4NzM1NjY0OSwiZXhwIjoxOTAyODg5NDQ5LCJhdWQiOiJjb2RlcnRoZW1lcy5jb20iLCJzdWIiOiJzdXBwb3J0QGNvZGVydGhlbWVzLmNvbSIsImxhc3ROYW1lIjoiVGVzdCIsIkVtYWlsIjoic3VwcG9ydEBjb2RlcnRoZW1lcy5jb20iLCJSb2xlIjoiQWRtaW4iLCJmaXJzdE5hbWUiOiJIeXBlciJ9.P27f7JNBF-vOaJFpkn-upfEh3zSprYfyhTOYhijykdI';
 
 let users = [
-    { id: 1, name: 'Chatvia', username: 'themesbrand', password: '123456', email: 'admin@themesbrand.com', role: 'role', token: token }
+    { id: 1, name: 'Chatlife', username: 'php1301', password: '123456', email: 'admin@php1301.com', role: 'role', token: token }
 ];
 
 const fakeBackend = () => {

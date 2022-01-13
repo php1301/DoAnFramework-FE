@@ -100,8 +100,8 @@ function UserProfileSidebar(props) {
                                         {props.active_user?.Type === "multi" ? props.active_user?.Name?.charAt(1) : props.active_user?.FullName?.charAt(0)}
                                     </span>
                                 </div>
-                                : <img src={`${process.env.REACT_APP_BASE_API_URL || localStorage.getItem("baseApi") || localStorage.getItem("baseApi")}/Auth/img?key=${props.active_user?.Avatar}`} className="rounded-circle avatar-lg img-thumbnail" alt="chatvia" />
-                            : <img src={fileImage || `${process.env.REACT_APP_BASE_API_URL || localStorage.getItem("baseApi")}/Auth/img?key=${props.active_user?.Avatar}`} className="rounded-circle avatar-lg img-thumbnail" alt="chatvia" />
+                                : <img src={`${process.env.REACT_APP_BASE_API_URL || localStorage.getItem("baseApi") || localStorage.getItem("baseApi")}/Auth/img?key=${props.active_user?.Avatar}`} className="rounded-circle avatar-lg img-thumbnail" alt="Chatlife" />
+                            : <img src={fileImage || `${process.env.REACT_APP_BASE_API_URL || localStorage.getItem("baseApi")}/Auth/img?key=${props.active_user?.Avatar}`} className="rounded-circle avatar-lg img-thumbnail" alt="Chatlife" />
                         }
                         {isEditMode && <Button type="button" color="light" className="avatar-xs p-0 rounded-circle profile-photo-edit">
                             <Label>
@@ -226,7 +226,7 @@ function UserProfileSidebar(props) {
                                             <Card className="p-2 mb-2">
                                                 <div className="d-flex align-items-center">
                                                     {mem.Avatar !== "Resource/no_img.jpg" ? (<div className={` chat-user-img ${checkIsOnline(mem) !== -1 ? "online" : ""} chat-avatar`}>
-                                                        <img src={`${process.env.REACT_APP_BASE_API_URL || localStorage.getItem("baseApi")}/Auth/img?key=${mem?.Avatar}`} className="rounded-circle chat-user-img avatar-xs" alt="chatvia" />
+                                                        <img src={`${process.env.REACT_APP_BASE_API_URL || localStorage.getItem("baseApi")}/Auth/img?key=${mem?.Avatar}`} className="rounded-circle chat-user-img avatar-xs" alt="Chatlife" />
                                                         {
                                                             <span className="user-status"></span>
                                                         }
